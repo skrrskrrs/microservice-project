@@ -1,8 +1,9 @@
 package org.example.invoiceservice.application;
 
+import org.example.invoiceservice.DTOs.CustomerDTO;
+import org.example.invoiceservice.DTOs.InvoiceAndCustomerDTO;
+import org.example.invoiceservice.DTOs.InvoiceDTO;
 import org.example.invoiceservice.components.CustomerClient;
-import org.example.invoiceservice.configuration.CustomerConfig;
-import org.example.invoiceservice.configuration.MapperConfig;
 import org.example.invoiceservice.domain.Invoice;
 import org.example.invoiceservice.domain.InvoiceException;
 import org.example.invoiceservice.domain.InvoiceRepository;
@@ -12,7 +13,6 @@ import org.example.invoiceservice.domainprimitives.MoneyAmount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

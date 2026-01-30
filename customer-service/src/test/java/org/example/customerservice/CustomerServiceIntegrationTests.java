@@ -1,11 +1,11 @@
 package org.example.customerservice;
 
-import org.example.customerservice.customer.application.CustomerApplicationService;
-import org.example.customerservice.customer.application.HomeAddressDTO;
-import org.example.customerservice.customer.application.MailAddressDTO;
-import org.example.customerservice.customer.domain.Customer;
-import org.example.customerservice.customer.domain.CustomerException;
-import org.example.customerservice.customer.domain.CustomerRepository;
+import org.example.customerservice.application.CustomerApplicationService;
+import org.example.customerservice.DTOs.HomeAddressDTO;
+import org.example.customerservice.DTOs.MailAddressDTO;
+import org.example.customerservice.domain.Customer;
+import org.example.customerservice.domain.CustomerException;
+import org.example.customerservice.domain.CustomerRepository;
 import org.example.customerservice.customer.domainprimitives.HomeAddress;
 import org.example.customerservice.customer.domainprimitives.MailAddress;
 import org.junit.jupiter.api.AfterEach;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -27,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Testcontainers
 @SpringBootTest
-@ActiveProfiles("test")
 public class CustomerServiceIntegrationTests {
     private Customer validCustomer;
     private final CustomerRepository customerRepository;

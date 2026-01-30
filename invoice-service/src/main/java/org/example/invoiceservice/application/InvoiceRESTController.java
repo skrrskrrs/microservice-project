@@ -1,5 +1,7 @@
 package org.example.invoiceservice.application;
 
+import org.example.invoiceservice.DTOs.InvoiceAndCustomerDTO;
+import org.example.invoiceservice.DTOs.InvoiceDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

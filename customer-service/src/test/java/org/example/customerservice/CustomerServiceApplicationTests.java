@@ -1,21 +1,18 @@
 package org.example.customerservice;
 
-import jakarta.transaction.Transactional;
-import org.example.customerservice.customer.application.CustomerApplicationService;
-import org.example.customerservice.customer.domain.Customer;
-import org.example.customerservice.customer.domain.CustomerException;
-import org.example.customerservice.customer.domain.CustomerRepository;
+import org.example.customerservice.domain.Customer;
+import org.example.customerservice.domain.CustomerException;
+import org.example.customerservice.domain.CustomerRepository;
 import org.example.customerservice.customer.domainprimitives.HomeAddress;
 import org.example.customerservice.customer.domainprimitives.MailAddress;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@ActiveProfiles("test")
 @DataJpaTest
 class CustomerServiceApplicationTests {
     private Customer validCustomer;

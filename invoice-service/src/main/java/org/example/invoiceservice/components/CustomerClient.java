@@ -1,6 +1,6 @@
 package org.example.invoiceservice.components;
 
-import org.example.invoiceservice.application.CustomerDTO;
+import org.example.invoiceservice.DTOs.CustomerDTO;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;

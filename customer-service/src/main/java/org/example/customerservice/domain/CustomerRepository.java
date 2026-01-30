@@ -1,4 +1,4 @@
-package org.example.customerservice.customer.domain;
+package org.example.customerservice.domain;
 
 import org.example.customerservice.customer.domainprimitives.CustomerId;
 import org.springframework.data.repository.CrudRepository;

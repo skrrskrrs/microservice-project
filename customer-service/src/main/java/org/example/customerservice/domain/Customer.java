@@ -1,4 +1,4 @@
-package org.example.customerservice.customer.domain;
+package org.example.customerservice.domain;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;

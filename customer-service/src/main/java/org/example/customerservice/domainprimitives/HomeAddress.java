@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.customerservice.customer.domain.CustomerException;
+import org.example.customerservice.domain.CustomerException;
 
 @Embeddable
 @Getter

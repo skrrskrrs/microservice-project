@@ -1,4 +1,4 @@
-package org.example.invoiceservice.application;
+package org.example.invoiceservice.DTOs;
 
 import java.util.UUID;
 

@@ -1,10 +1,13 @@
-package org.example.customerservice.customer.application;
+package org.example.customerservice.application;
 
 import jakarta.transaction.Transactional;
-import org.example.customerservice.customer.domain.Customer;
-import org.example.customerservice.customer.domain.CustomerException;
+import org.example.customerservice.DTOs.CustomerDTO;
+import org.example.customerservice.DTOs.HomeAddressDTO;
+import org.example.customerservice.DTOs.MailAddressDTO;
+import org.example.customerservice.domain.Customer;
+import org.example.customerservice.domain.CustomerException;
 import org.example.customerservice.customer.domainprimitives.CustomerId;
-import org.example.customerservice.customer.domain.CustomerRepository;
+import org.example.customerservice.domain.CustomerRepository;
 import org.example.customerservice.customer.domainprimitives.HomeAddress;
 import org.example.customerservice.customer.domainprimitives.MailAddress;
 import org.springframework.stereotype.Service;
