@@ -2,7 +2,7 @@ package customer_service;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import customer_service.domainprimitives.CustomerId;
+import customer_service.customer.domainprimitives.CustomerId;
 
 import java.util.UUID;
 

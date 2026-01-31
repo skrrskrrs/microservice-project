@@ -1,11 +1,11 @@
-package invoice_service.domainprimitives;
+package invoice_service.invoice.domainprimitives;
 
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import invoice_service.domain.InvoiceException;
+import invoice_service.invoice.domain.InvoiceException;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

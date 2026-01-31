@@ -2,7 +2,7 @@ package invoice_service;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import invoice_service.domainprimitives.InvoiceId;
+import invoice_service.invoice.domainprimitives.InvoiceId;
 
 import java.util.UUID;
 

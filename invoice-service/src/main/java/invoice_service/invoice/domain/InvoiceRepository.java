@@ -1,7 +1,7 @@
-package invoice_service.domain;
+package invoice_service.invoice.domain;
 
-import invoice_service.domainprimitives.CustomerId;
-import invoice_service.domainprimitives.InvoiceId;
+import invoice_service.invoice.domainprimitives.CustomerId;
+import invoice_service.invoice.domainprimitives.InvoiceId;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

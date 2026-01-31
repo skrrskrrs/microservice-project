@@ -1,11 +1,11 @@
-package customer_service.domainprimitives;
+package customer_service.customer.domainprimitives;
 
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import customer_service.domain.CustomerException;
+import customer_service.customer.domain.CustomerException;
 
 import java.io.Serializable;
 import java.util.UUID;

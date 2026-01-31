@@ -1,12 +1,12 @@
-package invoice_service.domain;
+package invoice_service.invoice.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import invoice_service.domainprimitives.CustomerId;
-import invoice_service.domainprimitives.InvoiceId;
-import invoice_service.domainprimitives.MoneyAmount;
+import invoice_service.invoice.domainprimitives.CustomerId;
+import invoice_service.invoice.domainprimitives.InvoiceId;
+import invoice_service.invoice.domainprimitives.MoneyAmount;
 
 import java.util.UUID;
 

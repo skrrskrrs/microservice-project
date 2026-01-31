@@ -1,4 +1,4 @@
-package invoice_service.domain;
+package invoice_service.invoice.domain;
 
 import invoice_service.IMSAbstractException;
 

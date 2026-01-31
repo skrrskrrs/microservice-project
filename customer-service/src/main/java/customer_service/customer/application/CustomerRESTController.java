@@ -1,10 +1,10 @@
-package customer_service.application;
+package customer_service.customer.application;
 
 import customer_service.DTOs.CustomerDTO;
 import customer_service.DTOs.HomeAddressDTO;
 import customer_service.DTOs.MailAddressDTO;
-import customer_service.domain.CustomerRepository;
-import customer_service.domainprimitives.CustomerId;
+import customer_service.customer.domain.CustomerRepository;
+import customer_service.customer.domainprimitives.CustomerId;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

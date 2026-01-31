@@ -1,13 +1,13 @@
 package customer_service;
 
-import customer_service.application.CustomerApplicationService;
+import customer_service.customer.application.CustomerApplicationService;
 import customer_service.DTOs.HomeAddressDTO;
 import customer_service.DTOs.MailAddressDTO;
-import customer_service.domain.Customer;
-import customer_service.domain.CustomerException;
-import customer_service.domain.CustomerRepository;
-import customer_service.domainprimitives.HomeAddress;
-import customer_service.domainprimitives.MailAddress;
+import customer_service.customer.domain.Customer;
+import customer_service.customer.domain.CustomerException;
+import customer_service.customer.domain.CustomerRepository;
+import customer_service.customer.domainprimitives.HomeAddress;
+import customer_service.customer.domainprimitives.MailAddress;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

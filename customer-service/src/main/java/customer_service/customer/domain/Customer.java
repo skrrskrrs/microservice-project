@@ -1,4 +1,4 @@
-package customer_service.domain;
+package customer_service.customer.domain;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EmbeddedId;
@@ -6,9 +6,9 @@ import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import customer_service.domainprimitives.CustomerId;
-import customer_service.domainprimitives.HomeAddress;
-import customer_service.domainprimitives.MailAddress;
+import customer_service.customer.domainprimitives.CustomerId;
+import customer_service.customer.domainprimitives.HomeAddress;
+import customer_service.customer.domainprimitives.MailAddress;
 
 import java.util.UUID;
 

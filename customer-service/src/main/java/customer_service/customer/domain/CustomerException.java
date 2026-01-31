@@ -1,4 +1,4 @@
-package customer_service.domain;
+package customer_service.customer.domain;
 
 import customer_service.IMSAbstractException;
 

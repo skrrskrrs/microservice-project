@@ -1,15 +1,15 @@
-package invoice_service.application;
+package invoice_service.invoice.application;
 
 import invoice_service.DTOs.CustomerDTO;
 import invoice_service.DTOs.InvoiceAndCustomerDTO;
 import invoice_service.DTOs.InvoiceDTO;
 import invoice_service.components.CustomerClient;
-import invoice_service.domain.Invoice;
-import invoice_service.domain.InvoiceException;
-import invoice_service.domain.InvoiceRepository;
-import invoice_service.domainprimitives.CustomerId;
-import invoice_service.domainprimitives.InvoiceId;
-import invoice_service.domainprimitives.MoneyAmount;
+import invoice_service.invoice.domain.Invoice;
+import invoice_service.invoice.domain.InvoiceException;
+import invoice_service.invoice.domain.InvoiceRepository;
+import invoice_service.invoice.domainprimitives.CustomerId;
+import invoice_service.invoice.domainprimitives.InvoiceId;
+import invoice_service.invoice.domainprimitives.MoneyAmount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

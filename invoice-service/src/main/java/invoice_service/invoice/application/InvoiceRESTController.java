@@ -1,4 +1,4 @@
-package invoice_service.application;
+package invoice_service.invoice.application;
 
 import invoice_service.DTOs.InvoiceAndCustomerDTO;
 import invoice_service.DTOs.InvoiceDTO;

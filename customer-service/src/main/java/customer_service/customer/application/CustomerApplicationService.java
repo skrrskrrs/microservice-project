@@ -1,15 +1,15 @@
-package customer_service.application;
+package customer_service.customer.application;
 
 import jakarta.transaction.Transactional;
 import customer_service.DTOs.CustomerDTO;
 import customer_service.DTOs.HomeAddressDTO;
 import customer_service.DTOs.MailAddressDTO;
-import customer_service.domain.Customer;
-import customer_service.domain.CustomerException;
-import customer_service.domainprimitives.CustomerId;
-import customer_service.domain.CustomerRepository;
-import customer_service.domainprimitives.HomeAddress;
-import customer_service.domainprimitives.MailAddress;
+import customer_service.customer.domain.Customer;
+import customer_service.customer.domain.CustomerException;
+import customer_service.customer.domainprimitives.CustomerId;
+import customer_service.customer.domain.CustomerRepository;
+import customer_service.customer.domainprimitives.HomeAddress;
+import customer_service.customer.domainprimitives.MailAddress;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
