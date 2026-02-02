@@ -1,5 +1,6 @@
 package customer_service;
 
+import customer_service.DTOs.CustomerDTO;
 import customer_service.customer.application.CustomerApplicationService;
 import customer_service.DTOs.HomeAddressDTO;
 import customer_service.DTOs.MailAddressDTO;
@@ -8,6 +9,9 @@ import customer_service.customer.domain.CustomerException;
 import customer_service.customer.domain.CustomerRepository;
 import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
+import customer_service.idempotency.application.IdempotencyApplicationService;
+import customer_service.idempotency.domain.IdempotencyException;
+import customer_service.idempotency.domain.IdempotencyRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,21 +24,24 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Optional;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 @SpringBootTest
 public class CustomerServiceIntegrationTests {
     private Customer validCustomer;
+    private CustomerDTO validCustomerDTO;
     private final CustomerRepository customerRepository;
     private final CustomerApplicationService customerApplicationService;
+    private final IdempotencyApplicationService idempotencyApplicationService;
 
     @Autowired
-    CustomerServiceIntegrationTests(CustomerRepository customerRepository, CustomerApplicationService customerApplicationService) {
+    CustomerServiceIntegrationTests(CustomerRepository customerRepository, CustomerApplicationService customerApplicationService, IdempotencyApplicationService idempotencyApplicationService) {
         this.customerRepository = customerRepository;
         this.customerApplicationService = customerApplicationService;
+        this.idempotencyApplicationService = idempotencyApplicationService;
     }
 
     @Container
@@ -44,11 +51,15 @@ public class CustomerServiceIntegrationTests {
                     .withUsername("test")
                     .withPassword("test");
 
+
+
     @DynamicPropertySource
     static void configureDatasource(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
+        registry.add("spring.jpa.show-sql", () -> "true"); // zum Debuggen
     }
 
     @BeforeEach
@@ -58,12 +69,22 @@ public class CustomerServiceIntegrationTests {
                 MailAddress.newInstance("test@valid.de"),
                 HomeAddress.newInstance("Teststreet","Cologne","Westfalen","50937"));
         customerRepository.save(validCustomer);
+
+        validCustomerDTO = new CustomerDTO(UUID.fromString("ebb4b70f-8f33-41c3-816e-ec84373ddbe3"),
+                "Peter",
+                "Hans",
+                "hans@web.de",
+                "Street1123",
+                "city",
+                "state",
+                "50937");
     }
 
     @AfterEach
     void tearDown() {
         customerRepository.deleteAll();
     }
+
 
     @Test
     void findCustomer() {
@@ -98,4 +119,17 @@ public class CustomerServiceIntegrationTests {
         MailAddress expected = MailAddress.newInstance("newMail@web.de");
         assertEquals(expected, reload.getMailAddress());
     }
+
+
+    @Test
+    void doubleIdempotencyKeyCheck2() {
+        UUID key = UUID.fromString("ebb4b70f-8f33-41c3-816e-ec84373ddbe3");
+        idempotencyApplicationService.ensureIdempotencyOnce(key);
+
+        assertThrows(
+                IdempotencyException.class,
+                () -> idempotencyApplicationService.ensureIdempotencyOnce(key)
+        );
+    }
+
 }

@@ -1,8 +1,23 @@
 package customer_service;
 
+import org.springframework.http.HttpStatus;
+
 public abstract class IMSAbstractException extends RuntimeException {
-    public IMSAbstractException( String message ) {
-        super( message );
+    private final HttpStatus status;
+    private final String errorCode;
+
+    protected IMSAbstractException(HttpStatus status, String message, String errorCode) {
+        super(message);
+        this.status = status;
+        this.errorCode = errorCode;
+    }
+
+    public HttpStatus getStatus() {
+        return status;
+    }
+
+    public String getErrorCode() {
+        return errorCode;
     }
 }
 

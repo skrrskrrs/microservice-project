@@ -1,5 +1,8 @@
 package customer_service.customer.application;
 
+import customer_service.idempotency.application.IdempotencyApplicationService;
+import customer_service.idempotency.domain.Idempotency;
+import customer_service.idempotency.domain.IdempotencyRepository;
 import jakarta.transaction.Transactional;
 import customer_service.DTOs.CustomerDTO;
 import customer_service.DTOs.HomeAddressDTO;
@@ -14,14 +17,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CustomerApplicationService {
 
     private final CustomerRepository customerRepository;
+    private final IdempotencyApplicationService idempotencyApplicationService;
 
-    public CustomerApplicationService(CustomerRepository customerRepository) {
+    public CustomerApplicationService(CustomerRepository customerRepository, IdempotencyApplicationService idempotencyApplicationService) {
         this.customerRepository = customerRepository;
+        this.idempotencyApplicationService = idempotencyApplicationService;
     }
 
     public List<CustomerDTO> getAllCustomers() {
@@ -60,7 +66,8 @@ public class CustomerApplicationService {
         );
     }
 
-    public CustomerDTO createCustomer(CustomerDTO customerDTO) {
+    public CustomerDTO createCustomer(UUID idempotencyKey, CustomerDTO customerDTO) {
+        idempotencyApplicationService.ensureIdempotencyOnce(idempotencyKey);
         Customer customer = Customer.newInstance(
                 customerDTO.firstName(),
                 customerDTO.lastName(),

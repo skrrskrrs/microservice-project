@@ -5,6 +5,9 @@ import customer_service.DTOs.HomeAddressDTO;
 import customer_service.DTOs.MailAddressDTO;
 import customer_service.customer.domain.CustomerRepository;
 import customer_service.customer.domainprimitives.CustomerId;
+import customer_service.idempotency.application.IdempotencyApplicationService;
+import customer_service.idempotency.domain.Idempotency;
+import customer_service.idempotency.domain.IdempotencyRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,19 +21,13 @@ import java.util.UUID;
 public class CustomerRESTController {
 
     private final CustomerApplicationService customerApplicationService;
-    private final CustomerRepository customerRepository;
+    private final IdempotencyApplicationService idempotencyApplicationService;
 
-    public CustomerRESTController(CustomerApplicationService customerApplicationService, CustomerRepository customerRepository) {
+    public CustomerRESTController(CustomerApplicationService customerApplicationService, IdempotencyApplicationService idempotencyApplicationService) {
         this.customerApplicationService = customerApplicationService;
-        this.customerRepository = customerRepository;
+        this.idempotencyApplicationService = idempotencyApplicationService;
     }
 
-    @GetMapping("/customers/{id}/exists")
-    public ResponseEntity<Void> exists(@PathVariable UUID id) {
-        return customerRepository.existsById(CustomerId.newInstance(id))
-                ? ResponseEntity.ok().build()
-                : ResponseEntity.notFound().build();
-    }
 
     @GetMapping("/customers")
     public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
@@ -45,8 +42,8 @@ public class CustomerRESTController {
     }
 
     @PostMapping("customers")
-    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerDTO customerDTO) {
-        CustomerDTO createCustomer = customerApplicationService.createCustomer(customerDTO);
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestHeader("Idempotency-Key") UUID idempotencyId, @RequestBody CustomerDTO customerDTO) {
+        CustomerDTO createCustomer = customerApplicationService.createCustomer(idempotencyId,customerDTO);
         URI returnURI = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")

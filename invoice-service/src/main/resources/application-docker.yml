@@ -1,5 +1,0 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5433/${DB_INVOICE_USER}
-    username: ${DB_INVOICE_PASSWORD}
-    password: ${DB_INVOICE_NAME}

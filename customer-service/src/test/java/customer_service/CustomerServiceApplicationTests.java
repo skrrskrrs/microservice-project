@@ -5,11 +5,16 @@ import customer_service.customer.domain.CustomerException;
 import customer_service.customer.domain.CustomerRepository;
 import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
+import customer_service.idempotency.application.IdempotencyApplicationService;
+import customer_service.idempotency.domain.Idempotency;
+import customer_service.idempotency.domain.IdempotencyException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
@@ -17,17 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class CustomerServiceApplicationTests {
     private Customer validCustomer;
 
-    @Autowired
-    private CustomerRepository customerRepository;
-    
-    @BeforeEach
-    void setUp() {
-        validCustomer = Customer.newInstance("Peter",
-                "Meier",
-                MailAddress.newInstance("test@valid.de"),
-                HomeAddress.newInstance("Teststreet", "Cologne", "Westfalen", "50937"));
-        customerRepository.save(validCustomer);
-    }
 
     @Test
     void createInvalidCustomer() {
@@ -77,7 +71,6 @@ class CustomerServiceApplicationTests {
         HomeAddress homeAddress2 = HomeAddress.newInstance("Teststreet","Cologn","Westfalen","50937");
         assertNotEquals(homeAddress,homeAddress2);
     }
-
 
 
 }
