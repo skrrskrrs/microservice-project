@@ -25,6 +25,9 @@ class CustomerServiceApplicationTests {
 
     @Test
     void createInvalidCustomer() {
+        //given
+        //when
+        //then
         assertThrows(CustomerException.class,
                 () -> Customer.newInstance("Eeat"
                         ,"Test"
@@ -54,21 +57,28 @@ class CustomerServiceApplicationTests {
 
     @Test
     void testDomainPrimitiveEquals(){
+        //given
         MailAddress mailAddress = MailAddress.newInstance("test@test.de");
         MailAddress mailAddress2 = MailAddress.newInstance("test@test.de");
+        //then
         assertEquals(mailAddress,mailAddress2);
+        //given
         HomeAddress homeAddress = HomeAddress.newInstance("Teststreet","Cologne","Westfalen","50937");
         HomeAddress homeAddress2 = HomeAddress.newInstance("Teststreet","Cologne","Westfalen","50937");
+        //then
         assertEquals(homeAddress,homeAddress2);
     }
 
     @Test
     void testDomainPrimitiveNotEquals(){
+        //given
         MailAddress mailAddress = MailAddress.newInstance("test@test.de");
         MailAddress mailAddress2 = MailAddress.newInstance("test@tett.de");
+        //then
         assertNotEquals(mailAddress,mailAddress2);
         HomeAddress homeAddress = HomeAddress.newInstance("Teststreet","Cologne","Westfalen","50937");
         HomeAddress homeAddress2 = HomeAddress.newInstance("Teststreet","Cologn","Westfalen","50937");
+        //then
         assertNotEquals(homeAddress,homeAddress2);
     }
 
