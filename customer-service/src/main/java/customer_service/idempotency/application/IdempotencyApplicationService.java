@@ -22,7 +22,6 @@ public class IdempotencyApplicationService {
         return idempotencyRepository.findById(idempotencyId).orElseThrow(()->new IdempotencyException("No such idempotency record"));
     }
 
-
     @Transactional
     public void ensureIdempotencyOnce(UUID id) {
         int inserted = idempotencyRepository.insertIfNotExists(id);

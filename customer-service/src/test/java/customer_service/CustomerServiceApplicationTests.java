@@ -20,64 +20,74 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @DataJpaTest
 class CustomerServiceApplicationTests {
-    private Customer validCustomer;
-
-
     @Test
     void createInvalidCustomer() {
         //given
         //when
         //then
         assertThrows(CustomerException.class,
-                () -> Customer.newInstance("Eeat"
+                () -> Customer.of("Eeat"
                         ,"Test"
-                        ,MailAddress.newInstance("asdsad.de")
-                        ,HomeAddress.newInstance("Teststreet","Cologne","Westfalen","50937")));
+                        ,MailAddress.of("asdsad.de")
+                        ,HomeAddress.of("Teststreet","Cologne","Westfalen","50937")));
+
         assertThrows(CustomerException.class,
-                () -> Customer.newInstance("Eeat"
+                () -> Customer.of("Eeat"
                         ,"Test"
-                        ,MailAddress.newInstance("asdsa@web.de")
-                        ,HomeAddress.newInstance(null,null,null,null)));
+                        ,MailAddress.of("asdsa@web.de")
+                        ,HomeAddress.of(null,null,null,null)));
+
         assertThrows(CustomerException.class,
-                () -> Customer.newInstance("Eeat"
+                () -> Customer.of("Eeat"
                         ,"Test"
-                        ,MailAddress.newInstance("asdsa@web.de")
-                        ,HomeAddress.newInstance("","Cologne","Westfalen","50937")));
+                        ,MailAddress.of("asdsa@web.de")
+                        ,HomeAddress.of("","Cologne","Westfalen","50937")));
+
         assertThrows(CustomerException.class,
-                () -> Customer.newInstance(""
+                () -> Customer.of(""
                         ,"Test"
-                        ,MailAddress.newInstance("asdsa@web.de")
-                        ,HomeAddress.newInstance("Test","Cologne","Westfalen","50937")));
+                        ,MailAddress.of("asdsa@web.de")
+                        ,HomeAddress.of("Test","Cologne","Westfalen","50937")));
+
         assertThrows(CustomerException.class,
-                () -> Customer.newInstance("Peter"
+                () -> Customer.of("Peter"
                         ,""
-                        ,MailAddress.newInstance("asdsa@web.de")
-                        ,HomeAddress.newInstance("Test","Cologne","Westfalen","50937")));
+                        ,MailAddress.of("asdsa@web.de")
+                        ,HomeAddress.of("Test","Cologne","Westfalen","50937")));
     }
 
     @Test
-    void testDomainPrimitiveEquals(){
+    void testMailAddressDomainPrimitiveEquals(){
         //given
-        MailAddress mailAddress = MailAddress.newInstance("test@test.de");
-        MailAddress mailAddress2 = MailAddress.newInstance("test@test.de");
+        MailAddress mailAddress = MailAddress.of("test@test.de");
+        MailAddress mailAddress2 = MailAddress.of("test@test.de");
         //then
-        assertEquals(mailAddress,mailAddress2);
+        assertEquals(mailAddress,mailAddress2);;
+    }
+
+    @Test
+    void homeAddressDomainPrimitiveEquals(){
         //given
-        HomeAddress homeAddress = HomeAddress.newInstance("Teststreet","Cologne","Westfalen","50937");
-        HomeAddress homeAddress2 = HomeAddress.newInstance("Teststreet","Cologne","Westfalen","50937");
+        HomeAddress homeAddress = HomeAddress.of("Teststreet","Cologne","Westfalen","50937");
+        HomeAddress homeAddress2 = HomeAddress.of("Teststreet","Cologne","Westfalen","50937");
         //then
         assertEquals(homeAddress,homeAddress2);
     }
 
     @Test
-    void testDomainPrimitiveNotEquals(){
+    void testMailAddressDomainPrimitiveNotEquals(){
         //given
-        MailAddress mailAddress = MailAddress.newInstance("test@test.de");
-        MailAddress mailAddress2 = MailAddress.newInstance("test@tett.de");
+        MailAddress mailAddress = MailAddress.of("test@test.de");
+        MailAddress mailAddress2 = MailAddress.of("test@tett.de");
         //then
         assertNotEquals(mailAddress,mailAddress2);
-        HomeAddress homeAddress = HomeAddress.newInstance("Teststreet","Cologne","Westfalen","50937");
-        HomeAddress homeAddress2 = HomeAddress.newInstance("Teststreet","Cologn","Westfalen","50937");
+    }
+
+    @Test
+    void testHomeAddressDomainPrimitiveNotEquals(){
+        //given
+        HomeAddress homeAddress = HomeAddress.of("Teststreet","Cologne","Westfalen","50937");
+        HomeAddress homeAddress2 = HomeAddress.of("Teststreet","Cologn","Westfalen","50937");
         //then
         assertNotEquals(homeAddress,homeAddress2);
     }

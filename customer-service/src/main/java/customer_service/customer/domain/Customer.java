@@ -35,7 +35,7 @@ public class Customer {
         this.homeAddress = homeAddress;
     }
 
-    public static Customer newInstance (  String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
+    public static Customer of (  String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
         return new Customer( firstName, lastName, mailAddress, homeAddress);
     }
 

@@ -20,9 +20,6 @@ public interface IdempotencyRepository extends JpaRepository<Idempotency, UUID> 
      * Rückgabewert:
      * 1 → neuer Datensatz wurde eingefügt (erster Request)
      * 0 → Key existiert bereits (Request wurde schon verarbeitet)
-     *
-     * @param id der Idempotency-Key
-     * @return 1, wenn neu eingefügt; 0, wenn bereits existiert
      */
     @Modifying
     @Query(

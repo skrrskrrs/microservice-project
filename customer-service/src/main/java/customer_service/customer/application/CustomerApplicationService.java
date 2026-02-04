@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class CustomerApplicationService {
 
     private final CustomerRepository customerRepository;
@@ -38,11 +39,8 @@ public class CustomerApplicationService {
                     customer.getCustomerId().getId(),
                     customer.getFirstName(),
                     customer.getLastName(),
-                    customer.getMailAddress().getMailAddress(),
-                    customer.getHomeAddress().getStreet(),
-                    customer.getHomeAddress().getCity(),
-                    customer.getHomeAddress().getState(),
-                    customer.getHomeAddress().getZip()
+                    MailAddressDTO.mailAddressAsDTO(customer.getMailAddress()),
+                    HomeAddressDTO.homeAddressAsDTO(customer.getHomeAddress())
             );
             customerDTOS.add(customerDTO);
         }
@@ -58,38 +56,36 @@ public class CustomerApplicationService {
         return new CustomerDTO(customer.getCustomerId().getId(),
                 customer.getFirstName(),
                 customer.getLastName(),
-                customer.getMailAddress().getMailAddress(),
-                customer.getHomeAddress().getStreet(),
-                customer.getHomeAddress().getCity(),
-                customer.getHomeAddress().getState(),
-                customer.getHomeAddress().getZip()
+                MailAddressDTO.mailAddressAsDTO(customer.getMailAddress()),
+                HomeAddressDTO.homeAddressAsDTO(customer.getHomeAddress())
         );
     }
 
     public CustomerDTO createCustomer(UUID idempotencyKey, CustomerDTO customerDTO) {
         idempotencyApplicationService.ensureIdempotencyOnce(idempotencyKey);
-        Customer customer = Customer.newInstance(
+        Customer customer = Customer.of(
                 customerDTO.firstName(),
                 customerDTO.lastName(),
-                MailAddress.newInstance(customerDTO.mailAddress()),
-                HomeAddress.newInstance(customerDTO.street(),customerDTO.city(),customerDTO.state(),customerDTO.zip())
+                MailAddress.of(customerDTO.mailAddressDTO().mailAddress()),
+                HomeAddress.of(customerDTO.homeAddressDTO().street(),
+                        customerDTO.homeAddressDTO().city(),
+                        customerDTO.homeAddressDTO().state(),
+                        customerDTO.homeAddressDTO().zip())
         );
         customerRepository.save(customer);
 
-        return new CustomerDTO(customer.getCustomerId().getId(),customer.getFirstName(),customer.getLastName(),customer.getMailAddress().getMailAddress(),customer.getHomeAddress().getStreet(), customerDTO.city(), customerDTO.state(), customerDTO.zip());
+        return new CustomerDTO(customer.getCustomerId().getId(),customer.getFirstName(),customer.getLastName(),MailAddressDTO.mailAddressAsDTO(customer.getMailAddress()),HomeAddressDTO.homeAddressAsDTO(customer.getHomeAddress()));
     }
 
-    @Transactional
     public void changeMailAddressOfCustomer(CustomerId customerId, MailAddressDTO mailAddress) {
         Customer customer = findCustomerById(customerId);
-        MailAddress updatedMailAddress = MailAddress.newInstance(mailAddress.mailAddress());
+        MailAddress updatedMailAddress = MailAddress.of(mailAddress.mailAddress());
         customer.changeMailAddress(updatedMailAddress);
     }
 
-    @Transactional
     public void changeHomeAddressOfCustomer(CustomerId customerId, HomeAddressDTO homeAddress) {
         Customer customer = findCustomerById(customerId);
-        HomeAddress newHomeAddress = HomeAddress.newInstance(homeAddress.street(),homeAddress.city(),homeAddress.state(),homeAddress.zip());
+        HomeAddress newHomeAddress = HomeAddress.of(homeAddress.street(),homeAddress.city(),homeAddress.state(),homeAddress.zip());
         customer.changeHomeAddress(newHomeAddress);
     }
 

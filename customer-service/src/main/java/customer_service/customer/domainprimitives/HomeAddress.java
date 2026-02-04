@@ -1,5 +1,6 @@
 package customer_service.customer.domainprimitives;
 
+import customer_service.DTOs.HomeAddressDTO;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -26,7 +27,7 @@ public class HomeAddress {
         this.zip = zip;
     }
 
-    public static HomeAddress newInstance(String street, String city, String state, String zip) {
+    public static HomeAddress of(String street, String city, String state, String zip) {
         return new HomeAddress(street, city, state, zip);
     }
 

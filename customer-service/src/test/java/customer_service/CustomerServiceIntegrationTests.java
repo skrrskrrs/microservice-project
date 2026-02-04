@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 @SpringBootTest
+@Transactional
 public class CustomerServiceIntegrationTests {
     private Customer validCustomer;
     private CustomerDTO validCustomerDTO;
@@ -51,8 +53,6 @@ public class CustomerServiceIntegrationTests {
                     .withUsername("test")
                     .withPassword("test");
 
-
-
     @DynamicPropertySource
     static void configureDatasource(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", postgres::getJdbcUrl);
@@ -64,27 +64,13 @@ public class CustomerServiceIntegrationTests {
 
     @BeforeEach
     void setUp() {
-        validCustomer = Customer.newInstance("Peter",
+        validCustomer = Customer.of("Peter",
                 "Meier",
-                MailAddress.newInstance("test@valid.de"),
-                HomeAddress.newInstance("Teststreet","Cologne","Westfalen","50937"));
+                MailAddress.of("test@valid.de"),
+                HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937"));
         customerRepository.save(validCustomer);
 
-        validCustomerDTO = new CustomerDTO(UUID.fromString("ebb4b70f-8f33-41c3-816e-ec84373ddbe3"),
-                "Peter",
-                "Hans",
-                "hans@web.de",
-                "Street1123",
-                "city",
-                "state",
-                "50937");
     }
-
-    @AfterEach
-    void tearDown() {
-        customerRepository.deleteAll();
-    }
-
 
     @Test
     void findCustomer() {
@@ -108,7 +94,7 @@ public class CustomerServiceIntegrationTests {
                 .findById(validCustomer.getCustomerId())
                 .orElseThrow(() -> new CustomerException("Customer does not exist"));
         //then
-        HomeAddress expected = HomeAddress.newInstance("NewAddress","Munich","Dunno","50939");
+        HomeAddress expected = HomeAddress.of("NewAddress","Munich","Dunno","50939");
         assertEquals(expected, reloaded.getHomeAddress());
     }
 
@@ -118,9 +104,11 @@ public class CustomerServiceIntegrationTests {
         MailAddressDTO mailAddressDTO = new MailAddressDTO("newMail@web.de");
         customerApplicationService.changeMailAddressOfCustomer(validCustomer.getCustomerId(), mailAddressDTO);
         //when
-        Customer reload = customerRepository.findById(validCustomer.getCustomerId()).orElseThrow(() -> new CustomerException("Customer does not exist"));
+        Customer reload = customerRepository
+                .findById(validCustomer.getCustomerId())
+                .orElseThrow(() -> new CustomerException("Customer does not exist"));
         //then
-        MailAddress expected = MailAddress.newInstance("newMail@web.de");
+        MailAddress expected = MailAddress.of("newMail@web.de");
         assertEquals(expected, reload.getMailAddress());
     }
 
@@ -132,8 +120,7 @@ public class CustomerServiceIntegrationTests {
         //when
         idempotencyApplicationService.ensureIdempotencyOnce(key);
         //then
-        assertThrows(
-                IdempotencyException.class,
+        assertThrows(IdempotencyException.class,
                 () -> idempotencyApplicationService.ensureIdempotencyOnce(key)
         );
     }

@@ -1,5 +1,6 @@
 package customer_service.customer.domainprimitives;
 
+import customer_service.DTOs.MailAddressDTO;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -20,7 +21,7 @@ public class MailAddress {
         this.mailAddress = mailAddress;
     }
 
-    public static MailAddress newInstance(String mailAddress) {
+    public static MailAddress of(String mailAddress) {
         return new MailAddress(mailAddress);
     }
 }

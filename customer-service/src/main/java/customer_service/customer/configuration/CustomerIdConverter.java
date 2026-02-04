@@ -1,4 +1,4 @@
-package customer_service;
+package customer_service.customer.configuration;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
