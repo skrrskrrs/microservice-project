@@ -34,7 +34,7 @@ public class CustomerApplicationService {
     public List<CustomerDTO> getAllCustomers() {
         Iterable<Customer> customers = customerRepository.findAll();
         List<CustomerDTO> customerDTOS = new ArrayList<>();
-        for ( Customer customer : customers){
+        for (Customer customer : customers) {
             CustomerDTO customerDTO = new CustomerDTO(
                     customer.getCustomerId().getId(),
                     customer.getFirstName(),
@@ -74,7 +74,7 @@ public class CustomerApplicationService {
         );
         customerRepository.save(customer);
 
-        return new CustomerDTO(customer.getCustomerId().getId(),customer.getFirstName(),customer.getLastName(),MailAddressDTO.mailAddressAsDTO(customer.getMailAddress()),HomeAddressDTO.homeAddressAsDTO(customer.getHomeAddress()));
+        return new CustomerDTO(customer.getCustomerId().getId(), customer.getFirstName(), customer.getLastName(), MailAddressDTO.mailAddressAsDTO(customer.getMailAddress()), HomeAddressDTO.homeAddressAsDTO(customer.getHomeAddress()));
     }
 
     public void changeMailAddressOfCustomer(CustomerId customerId, MailAddressDTO mailAddress) {
@@ -85,7 +85,7 @@ public class CustomerApplicationService {
 
     public void changeHomeAddressOfCustomer(CustomerId customerId, HomeAddressDTO homeAddress) {
         Customer customer = findCustomerById(customerId);
-        HomeAddress newHomeAddress = HomeAddress.of(homeAddress.street(),homeAddress.city(),homeAddress.state(),homeAddress.zip());
+        HomeAddress newHomeAddress = HomeAddress.of(homeAddress.street(), homeAddress.city(), homeAddress.state(), homeAddress.zip());
         customer.changeHomeAddress(newHomeAddress);
     }
 

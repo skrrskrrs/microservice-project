@@ -43,26 +43,26 @@ public class CustomerRESTController {
 
     @PostMapping("customers")
     public ResponseEntity<CustomerDTO> createCustomer(@RequestHeader("Idempotency-Key") UUID idempotencyId, @RequestBody CustomerDTO customerDTO) {
-        CustomerDTO createCustomer = customerApplicationService.createCustomer(idempotencyId,customerDTO);
+        CustomerDTO createCustomer = customerApplicationService.createCustomer(idempotencyId, customerDTO);
         URI returnURI = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand( createCustomer.customerId())
+                .buildAndExpand(createCustomer.customerId())
                 .toUri();
         return ResponseEntity
                 .created(returnURI)
-                .body( createCustomer);
+                .body(createCustomer);
     }
 
     @PatchMapping("/customers/{id}/mailAddress")
     public ResponseEntity<Void> updateMailAddress(@PathVariable UUID id, @RequestBody MailAddressDTO mailAddress) {
-        customerApplicationService.changeMailAddressOfCustomer(CustomerId.newInstance(id),mailAddress);
+        customerApplicationService.changeMailAddressOfCustomer(CustomerId.newInstance(id), mailAddress);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/customers/{id}/homeAddress")
     public ResponseEntity<Void> updateHomeAddress(@PathVariable UUID id, @RequestBody HomeAddressDTO homeAddress) {
-        customerApplicationService.changeHomeAddressOfCustomer(CustomerId.newInstance(id),homeAddress);
+        customerApplicationService.changeHomeAddressOfCustomer(CustomerId.newInstance(id), homeAddress);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

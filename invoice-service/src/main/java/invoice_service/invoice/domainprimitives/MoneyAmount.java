@@ -16,9 +16,9 @@ public class MoneyAmount {
     private String currency;
 
     protected MoneyAmount(Double amount, String currency) {
-        if(currency == null || amount == null) throw new InvoiceException("currency or amount is null");
-        if(amount < 0) throw new InvoiceException("amount is negative");
-        if(currency.isEmpty()) throw new InvoiceException("currency is empty");
+        if (currency == null || amount == null) throw new InvoiceException("currency or amount is null");
+        if (amount < 0) throw new InvoiceException("amount is negative");
+        if (currency.isEmpty()) throw new InvoiceException("currency is empty");
         this.amount = amount;
         this.currency = currency;
     }

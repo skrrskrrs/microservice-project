@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(IMSAbstractException.class)
-    public ResponseEntity<?> handleCustomerNotFound(IMSAbstractException ex) {
+    public ResponseEntity<?> handleIMSException(IMSAbstractException ex) {
         return ResponseEntity
                 .status(ex.getStatus())
                 .body(ex.getMessage());

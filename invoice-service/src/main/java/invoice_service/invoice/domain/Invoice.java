@@ -32,13 +32,14 @@ public class Invoice {
     private CustomerId customerId;
 
     protected Invoice(CustomerId customerId, MoneyAmount moneyAmount) {
-        if(customerId == null || moneyAmount == null) throw new InvoiceException("Invoice id , moneyamount or customer id cannot be null");
+        if (customerId == null || moneyAmount == null)
+            throw new InvoiceException("Invoice id , moneyamount or customer id cannot be null");
         this.id = InvoiceId.newInstance(UUID.randomUUID());
         this.customerId = customerId;
         this.moneyAmount = moneyAmount;
     }
 
-    public static Invoice newInstance( CustomerId customerId,  MoneyAmount moneyAmount) {
+    public static Invoice newInstance(CustomerId customerId, MoneyAmount moneyAmount) {
         return new Invoice(customerId, moneyAmount);
     }
 

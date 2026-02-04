@@ -18,8 +18,8 @@ public class IdempotencyApplicationService {
         this.idempotencyRepository = idempotencyRepository;
     }
 
-    public Idempotency findIdempotency(UUID idempotencyId){
-        return idempotencyRepository.findById(idempotencyId).orElseThrow(()->new IdempotencyException("No such idempotency record"));
+    public Idempotency findIdempotency(UUID idempotencyId) {
+        return idempotencyRepository.findById(idempotencyId).orElseThrow(() -> new IdempotencyException("No such idempotency record"));
     }
 
     @Transactional

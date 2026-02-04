@@ -26,8 +26,9 @@ public class Customer {
     private HomeAddress homeAddress;
 
     protected Customer(String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
-        if(firstName == null || lastName == null || mailAddress == null || homeAddress == null) throw new CustomerException("CustomerId and/or MailAddress are null");
-        if(firstName.isEmpty() || lastName.isEmpty()) throw new CustomerException("First Name or Last Name are Empty");
+        if (firstName == null || lastName == null || mailAddress == null || homeAddress == null)
+            throw new CustomerException("CustomerId and/or MailAddress are null");
+        if (firstName.isEmpty() || lastName.isEmpty()) throw new CustomerException("First Name or Last Name are Empty");
         this.customerId = CustomerId.newInstance(UUID.randomUUID());
         this.firstName = firstName;
         this.lastName = lastName;
@@ -35,8 +36,8 @@ public class Customer {
         this.homeAddress = homeAddress;
     }
 
-    public static Customer of (  String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
-        return new Customer( firstName, lastName, mailAddress, homeAddress);
+    public static Customer of(String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
+        return new Customer(firstName, lastName, mailAddress, homeAddress);
     }
 
     public void changeHomeAddress(HomeAddress homeAddress) {

@@ -19,7 +19,7 @@ public class CustomerId implements Serializable {
 
     private CustomerId(UUID id) {
         if (id == null) throw new InvoiceException("id is null");
-        this.id= id;
+        this.id = id;
     }
 
     public static CustomerId newInstance(UUID id) {

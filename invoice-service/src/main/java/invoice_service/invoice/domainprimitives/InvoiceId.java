@@ -11,18 +11,18 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @Embeddable
-@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @EqualsAndHashCode
 public class InvoiceId implements Serializable {
     private UUID id;
 
-    protected InvoiceId(UUID id){
-        if(id==null) throw new InvoiceException("id is null");
+    protected InvoiceId(UUID id) {
+        if (id == null) throw new InvoiceException("id is null");
         this.id = id;
     }
 
-    public static InvoiceId newInstance(UUID id){
+    public static InvoiceId newInstance(UUID id) {
         return new InvoiceId(id);
     }
 }

@@ -26,11 +26,11 @@ public class InvoiceRESTController {
         URI returnURI = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand( newInvoice.invoiceId())
+                .buildAndExpand(newInvoice.invoiceId())
                 .toUri();
         return ResponseEntity
                 .created(returnURI)
-                .body( newInvoice );
+                .body(newInvoice);
     }
 
     @GetMapping("/invoices/{invoiceId}")
@@ -41,7 +41,7 @@ public class InvoiceRESTController {
 
     @GetMapping("/invoices")
     public ResponseEntity<List<InvoiceDTO>> getAllInvoicesForCustomer(@RequestParam UUID customerId) {
-        List<InvoiceDTO> invoiceDTO = invoiceApplicationService.getListOfInvoicesForCustomer( customerId);
-        return new ResponseEntity<>(invoiceDTO,HttpStatus.OK);
+        List<InvoiceDTO> invoiceDTO = invoiceApplicationService.getListOfInvoicesForCustomer(customerId);
+        return new ResponseEntity<>(invoiceDTO, HttpStatus.OK);
     }
 }

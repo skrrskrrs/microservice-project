@@ -68,27 +68,13 @@ public class CustomerServiceRESTTest {
         registry.add("spring.jpa.show-sql", () -> "true"); // zum Debuggen
     }
 
-    @BeforeEach
-    public void setup() {
-        Customer validCustomer = Customer.of("Peter",
-                "Meier",
-                MailAddress.of("test@valid.de"),
-                HomeAddress.of("Teststreet","Cologne","Westfalen","50937"));
-        customerRepository.save(validCustomer);
-    }
-
     @Test
     public void addAndGetCustomerViaREST() throws Exception {
         //given
         CreateCustomerDTO createCustomerDTO = new CreateCustomerDTO("Hans",
                 "Meier",
                 MailAddressDTO.mailAddressAsDTO(MailAddress.of("test@web.de")),
-                HomeAddressDTO.homeAddressAsDTO(HomeAddress.of("Teststreet","Cologne","Westfalen","50937"))
-                );
-        CreateCustomerDTO createCustomerDTO2 = new CreateCustomerDTO("Franz",
-                "Meier",
-                MailAddressDTO.mailAddressAsDTO(MailAddress.of("test@web.de")),
-                HomeAddressDTO.homeAddressAsDTO(HomeAddress.of("Teststreet","Munich","Westfalen","80537"))
+                HomeAddressDTO.homeAddressAsDTO(HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937"))
         );
 
         String json = objectMapper.writeValueAsString(createCustomerDTO);
@@ -96,22 +82,22 @@ public class CustomerServiceRESTTest {
         String idempotencyKey = UUID.randomUUID().toString();
 
         //when
-       MvcResult mvcResult = mockMvc.perform(post("/customers")
+        MvcResult mvcResult = mockMvc.perform(post("/customers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("idempotency-key", idempotencyKey)
                         .content(json))
-                        .andExpect(status().isCreated())
-               .andExpect(jsonPath("$.firstName", is(createCustomerDTO.firstName())))
-               .andExpect(jsonPath("$.lastName", is(createCustomerDTO.lastName())))
-               .andExpect(jsonPath("$.mailAddressDTO.mailAddress", is(createCustomerDTO.mailAddressDTO().mailAddress())))
-               .andExpect(jsonPath("$.homeAddressDTO.city", is(createCustomerDTO.homeAddressDTO().city())))
-                        .andReturn();
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.firstName", is(createCustomerDTO.firstName())))
+                .andExpect(jsonPath("$.lastName", is(createCustomerDTO.lastName())))
+                .andExpect(jsonPath("$.mailAddressDTO.mailAddress", is(createCustomerDTO.mailAddressDTO().mailAddress())))
+                .andExpect(jsonPath("$.homeAddressDTO.city", is(createCustomerDTO.homeAddressDTO().city())))
+                .andReturn();
         String location = mvcResult.getResponse().getHeader("Location");
 
-
-        mockMvc .perform(get( location ))
+        //then
+        mockMvc.perform(get(location))
                 .andDo(print())
-                .andExpect(status().isOk() )
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName", is(createCustomerDTO.firstName())))
                 .andExpect(jsonPath("$.lastName", is(createCustomerDTO.lastName())))
                 .andExpect(jsonPath("$.mailAddressDTO.mailAddress", is(createCustomerDTO.mailAddressDTO().mailAddress())))
@@ -119,13 +105,39 @@ public class CustomerServiceRESTTest {
     }
 
     @Test
+    public void testDoubleIdempotencyKey() throws Exception {
+        CreateCustomerDTO createCustomerDTO = new CreateCustomerDTO("Hans",
+                "Meier",
+                MailAddressDTO.mailAddressAsDTO(MailAddress.of("test@web.de")),
+                HomeAddressDTO.homeAddressAsDTO(HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937"))
+        );
+
+        String json = objectMapper.writeValueAsString(createCustomerDTO);
+        String idempotencyKey = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d").toString();
+
+        MvcResult mvcResult = mockMvc.perform(post("/customers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Idempotency-Key", idempotencyKey)
+                        .content(json))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        MvcResult mvcResult2 = mockMvc.perform(post("/customers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Idempotency-Key", idempotencyKey)
+                        .content(json))
+                .andExpect(status().isConflict())
+                .andReturn();
+    }
+
+    @Test
     public void testGet404ForUnknownID() throws Exception {
         // given
         // when
         // then
-        mockMvc .perform(get( "/customers/" + UUID.randomUUID() ))
+        mockMvc.perform(get("/customers/" + UUID.randomUUID()))
                 .andDo(print())
-                .andExpect(status().isNotFound() );
+                .andExpect(status().isNotFound());
     }
 
 }
