@@ -1,7 +1,6 @@
 package customer_service;
 
 import customer_service.DTOs.CreateCustomerDTO;
-import customer_service.DTOs.CustomerDTO;
 import customer_service.DTOs.HomeAddressDTO;
 import customer_service.DTOs.MailAddressDTO;
 import customer_service.customer.domain.Customer;
@@ -9,11 +8,9 @@ import customer_service.customer.domain.CustomerRepository;
 import customer_service.customer.domainprimitives.CustomerId;
 import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
-import jakarta.transaction.Transactional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -27,12 +24,10 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import tools.jackson.databind.ObjectMapper;
 
-import java.util.Optional;
 import java.util.UUID;
 
-import static customer_service.sampleData.customerHans;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -45,6 +40,7 @@ public class CustomerServiceRESTTest {
     private final CustomerRepository customerRepository;
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
+
 
     @Autowired
     public CustomerServiceRESTTest(CustomerRepository customerRepository, MockMvc mockMvc, ObjectMapper objectMapper) {
@@ -84,13 +80,9 @@ public class CustomerServiceRESTTest {
     @Test
     public void addAndGetCustomerViaREST() throws Exception {
         //given
-        CreateCustomerDTO createCustomerDTO = new CreateCustomerDTO("Hans",
-                "Meier",
-                MailAddressDTO.mailAddressAsDTO(MailAddress.of("test@web.de")),
-                HomeAddressDTO.homeAddressAsDTO(HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937"))
-        );
+        CreateCustomerDTO testDTO = SampleData.customerDTOHans();
 
-        String json = objectMapper.writeValueAsString(createCustomerDTO);
+        String json = objectMapper.writeValueAsString(testDTO);
         String idempotencyKey = UUID.randomUUID().toString();
 
         //when
@@ -100,10 +92,10 @@ public class CustomerServiceRESTTest {
                         .content(json))
                 .andExpect(status().isCreated())
                 .andDo(print())
-                .andExpect(jsonPath("$.firstName", is(createCustomerDTO.firstName())))
-                .andExpect(jsonPath("$.lastName", is(createCustomerDTO.lastName())))
-                .andExpect(jsonPath("$.mailAddressDTO.mailAddress", is(createCustomerDTO.mailAddressDTO().mailAddress())))
-                .andExpect(jsonPath("$.homeAddressDTO.city", is(createCustomerDTO.homeAddressDTO().city())))
+                .andExpect(jsonPath("$.firstName", is(testDTO.firstName())))
+                .andExpect(jsonPath("$.lastName", is(testDTO.lastName())))
+                .andExpect(jsonPath("$.mailAddressDTO.mailAddress", is(testDTO.mailAddressDTO().mailAddress())))
+                .andExpect(jsonPath("$.homeAddressDTO.city", is(testDTO.homeAddressDTO().city())))
                 .andReturn();
         String location = mvcResult.getResponse().getHeader("Location");
 
@@ -112,23 +104,20 @@ public class CustomerServiceRESTTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(jsonPath("$.firstName", is(createCustomerDTO.firstName())))
-                .andExpect(jsonPath("$.lastName", is(createCustomerDTO.lastName())))
-                .andExpect(jsonPath("$.mailAddressDTO.mailAddress", is(createCustomerDTO.mailAddressDTO().mailAddress())))
-                .andExpect(jsonPath("$.homeAddressDTO.city", is(createCustomerDTO.homeAddressDTO().city())));
+                .andExpect(jsonPath("$.firstName", is(testDTO.firstName())))
+                .andExpect(jsonPath("$.lastName", is(testDTO.lastName())))
+                .andExpect(jsonPath("$.mailAddressDTO.mailAddress", is(testDTO.mailAddressDTO().mailAddress())))
+                .andExpect(jsonPath("$.homeAddressDTO.city", is(testDTO.homeAddressDTO().city())));
     }
 
     @Test
     public void testDoubleIdempotencyKey() throws Exception {
         //given
-        CreateCustomerDTO createCustomerDTO = new CreateCustomerDTO("Hans",
-                "Meier",
-                MailAddressDTO.mailAddressAsDTO(MailAddress.of("test@web.de")),
-                HomeAddressDTO.homeAddressAsDTO(HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937"))
-        );
+        CreateCustomerDTO testDTO = SampleData.customerDTOHans();
 
-        String json = objectMapper.writeValueAsString(createCustomerDTO);
-        String idempotencyKey = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d").toString();
+
+                String json = objectMapper.writeValueAsString(testDTO);
+        UUID idempotencyKey = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d");
 
         //when
         MvcResult mvcResult = mockMvc.perform(post("/customers")
@@ -158,18 +147,35 @@ public class CustomerServiceRESTTest {
     public void updateMailAddressViaREST() throws Exception {
         //given
         MailAddressDTO mailAddressDTO = new MailAddressDTO("newMail@web.de");
+        UUID testId = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d");
         String patchJson = objectMapper.writeValueAsString(mailAddressDTO);
 
         //when
         mockMvc.perform(patch("/customers/{id}/mailAddress",
-                        "27bddc7b-5a4f-460e-a072-63ba90b7cf1d")
+                        testId.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(patchJson))
                 .andExpect(status().isOk())
                 .andDo(print());
-        Customer updated = customerRepository.findById(CustomerId.newInstance(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"))).orElseThrow(() -> new AssertionError("Customer not found in DB"));
+
+        //then
+        Customer updated = customerRepository.findById(CustomerId.newInstance(testId)).orElseThrow(() -> new AssertionError("Customer not found in DB"));
         assertEquals(updated.getMailAddress().getMailAddress(), mailAddressDTO.mailAddress());
 
+    }
+
+    @Test
+    public void deleteCustomerViaREST() throws Exception {
+        //given
+        UUID testId = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d");
+
+        //when
+        mockMvc.perform(delete("/customers/{id}",
+                        testId.toString()))
+                .andExpect(status().isNoContent());
+        //then
+        boolean exist = customerRepository.existsById(CustomerId.newInstance(testId));
+        assertFalse(exist);
     }
 
     @Test
