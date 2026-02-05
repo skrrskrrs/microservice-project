@@ -36,6 +36,18 @@ public class Customer {
         this.homeAddress = homeAddress;
     }
 
+    protected Customer(CustomerId id, String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
+        this.customerId = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.mailAddress = mailAddress;
+        this.homeAddress = homeAddress;
+    }
+
+    public static Customer withId(CustomerId id, String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
+        return new Customer(id, firstName, lastName, mailAddress, homeAddress);
+    }
+
     public static Customer of(String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
         return new Customer(firstName, lastName, mailAddress, homeAddress);
     }

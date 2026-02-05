@@ -21,11 +21,9 @@ import java.util.UUID;
 public class CustomerRESTController {
 
     private final CustomerApplicationService customerApplicationService;
-    private final IdempotencyApplicationService idempotencyApplicationService;
 
-    public CustomerRESTController(CustomerApplicationService customerApplicationService, IdempotencyApplicationService idempotencyApplicationService) {
+    public CustomerRESTController(CustomerApplicationService customerApplicationService) {
         this.customerApplicationService = customerApplicationService;
-        this.idempotencyApplicationService = idempotencyApplicationService;
     }
 
 
@@ -55,13 +53,13 @@ public class CustomerRESTController {
     }
 
     @PatchMapping("/customers/{id}/mailAddress")
-    public ResponseEntity<Void> updateMailAddress(@PathVariable UUID id, @RequestBody MailAddressDTO mailAddress) {
+    public ResponseEntity<CustomerDTO> updateMailAddress(@PathVariable UUID id, @RequestBody MailAddressDTO mailAddress) {
         customerApplicationService.changeMailAddressOfCustomer(CustomerId.newInstance(id), mailAddress);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/customers/{id}/homeAddress")
-    public ResponseEntity<Void> updateHomeAddress(@PathVariable UUID id, @RequestBody HomeAddressDTO homeAddress) {
+    public ResponseEntity<CustomerDTO> updateHomeAddress(@PathVariable UUID id, @RequestBody HomeAddressDTO homeAddress) {
         customerApplicationService.changeHomeAddressOfCustomer(CustomerId.newInstance(id), homeAddress);
         return new ResponseEntity<>(HttpStatus.OK);
     }

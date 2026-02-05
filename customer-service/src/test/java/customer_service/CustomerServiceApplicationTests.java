@@ -3,6 +3,7 @@ package customer_service;
 import customer_service.customer.domain.Customer;
 import customer_service.customer.domain.CustomerException;
 import customer_service.customer.domain.CustomerRepository;
+import customer_service.customer.domainprimitives.CustomerId;
 import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
 import customer_service.idempotency.application.IdempotencyApplicationService;
@@ -54,6 +55,24 @@ class CustomerServiceApplicationTests {
                         ,""
                         ,MailAddress.of("asdsa@web.de")
                         ,HomeAddress.of("Test","Cologne","Westfalen","50937")));
+    }
+
+    @Test
+    void testCustomerIdPrimitiveEquals(){
+        //given
+        CustomerId customerId = CustomerId.newInstance(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
+        CustomerId customerId2 = CustomerId.newInstance(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
+        //then
+        assertEquals(customerId,customerId2);
+    }
+
+    @Test
+    void testCustomerIdPrimitiveNotEquals(){
+        //given
+        CustomerId customerId = CustomerId.newInstance(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
+        CustomerId customerId2 = CustomerId.newInstance(UUID.fromString("28bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
+        //then
+        assertNotEquals(customerId,customerId2);
     }
 
     @Test
