@@ -13,8 +13,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Testcontainers
 @AutoConfigureMockMvc
+@ActiveProfiles("test-container")
 public class CustomerServiceRESTTest {
     private final CustomerRepository customerRepository;
     private final MockMvc mockMvc;
@@ -50,20 +53,10 @@ public class CustomerServiceRESTTest {
     }
 
     @Container
+    @ServiceConnection
     static PostgreSQLContainer<?> postgres =
-            new PostgreSQLContainer<>("postgres:16")
-                    .withDatabaseName("testdb")
-                    .withUsername("test")
-                    .withPassword("test");
+            new PostgreSQLContainer<>("postgres:16");
 
-    @DynamicPropertySource
-    static void configureDatasource(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
-        registry.add("spring.jpa.show-sql", () -> "true"); // zum Debuggen
-    }
 
     @BeforeEach
     public void setup() {
@@ -116,7 +109,7 @@ public class CustomerServiceRESTTest {
         CreateCustomerDTO testDTO = SampleData.customerDTOHans();
 
 
-                String json = objectMapper.writeValueAsString(testDTO);
+        String json = objectMapper.writeValueAsString(testDTO);
         UUID idempotencyKey = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d");
 
         //when
@@ -183,7 +176,8 @@ public class CustomerServiceRESTTest {
         // given
         // when
         // then
-        mockMvc.perform(get("/customers/" + UUID.randomUUID()))
+        mockMvc.perform(get("/customers/{id}",
+                        UUID.randomUUID()))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }

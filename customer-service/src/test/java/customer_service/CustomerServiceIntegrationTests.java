@@ -17,6 +17,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +34,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 @SpringBootTest
 @Transactional
+@ActiveProfiles("test-container")
 public class CustomerServiceIntegrationTests {
     private Customer validCustomer;
-    private CustomerDTO validCustomerDTO;
     private final CustomerRepository customerRepository;
     private final CustomerApplicationService customerApplicationService;
     private final IdempotencyApplicationService idempotencyApplicationService;
@@ -47,20 +49,10 @@ public class CustomerServiceIntegrationTests {
     }
 
     @Container
+    @ServiceConnection
     static PostgreSQLContainer<?> postgres =
-            new PostgreSQLContainer<>("postgres:16")
-                    .withDatabaseName("testdb")
-                    .withUsername("test")
-                    .withPassword("test");
+            new PostgreSQLContainer<>("postgres:16");
 
-    @DynamicPropertySource
-    static void configureDatasource(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
-        registry.add("spring.jpa.show-sql", () -> "true"); // zum Debuggen
-    }
 
     @BeforeEach
     void setUp() {
