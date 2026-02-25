@@ -35,7 +35,7 @@ public class CustomerRESTController {
 
     @GetMapping("/customers/{id}")
     public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable UUID id) {
-        CustomerDTO customerDTO = customerApplicationService.getCustomerById(CustomerId.newInstance(id));
+        CustomerDTO customerDTO = customerApplicationService.getCustomerById(CustomerId.of(id));
         return new ResponseEntity<>(customerDTO, HttpStatus.OK);
     }
 
@@ -54,19 +54,19 @@ public class CustomerRESTController {
 
     @PatchMapping("/customers/{id}/mailAddress")
     public ResponseEntity<CustomerDTO> updateMailAddress(@PathVariable UUID id, @RequestBody MailAddressDTO mailAddress) {
-        customerApplicationService.changeMailAddressOfCustomer(CustomerId.newInstance(id), mailAddress);
+        customerApplicationService.changeMailAddressOfCustomer(CustomerId.of(id), mailAddress);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/customers/{id}/homeAddress")
     public ResponseEntity<CustomerDTO> updateHomeAddress(@PathVariable UUID id, @RequestBody HomeAddressDTO homeAddress) {
-        customerApplicationService.changeHomeAddressOfCustomer(CustomerId.newInstance(id), homeAddress);
+        customerApplicationService.changeHomeAddressOfCustomer(CustomerId.of(id), homeAddress);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/customers/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable UUID id) {
-        customerApplicationService.deleteCustomer(CustomerId.newInstance(id));
+        customerApplicationService.deleteCustomer(CustomerId.of(id));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

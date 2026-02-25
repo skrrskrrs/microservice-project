@@ -22,7 +22,7 @@ public class CustomerId implements Serializable {
         this.id = id;
     }
 
-    public static CustomerId newInstance(UUID customerId) {
+    public static CustomerId of(UUID customerId) {
         return new CustomerId(customerId);
     }
 }

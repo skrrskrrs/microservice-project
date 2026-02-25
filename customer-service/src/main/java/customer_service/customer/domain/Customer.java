@@ -29,7 +29,7 @@ public class Customer {
         if (firstName == null || lastName == null || mailAddress == null || homeAddress == null)
             throw new CustomerException("CustomerId and/or MailAddress are null");
         if (firstName.isEmpty() || lastName.isEmpty()) throw new CustomerException("First Name or Last Name are Empty");
-        this.customerId = CustomerId.newInstance(UUID.randomUUID());
+        this.customerId = CustomerId.of(UUID.randomUUID());
         this.firstName = firstName;
         this.lastName = lastName;
         this.mailAddress = mailAddress;
@@ -37,6 +37,9 @@ public class Customer {
     }
 
     protected Customer(CustomerId id, String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
+        if (firstName == null || lastName == null || mailAddress == null || homeAddress == null)
+            throw new CustomerException("CustomerId and/or MailAddress are null");
+        if (firstName.isEmpty() || lastName.isEmpty()) throw new CustomerException("First Name or Last Name are Empty");
         this.customerId = id;
         this.firstName = firstName;
         this.lastName = lastName;

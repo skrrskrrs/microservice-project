@@ -61,7 +61,7 @@ public class CustomerServiceRESTTest {
     @BeforeEach
     public void setup() {
         Customer customer = Customer.withId(
-                CustomerId.newInstance(UUID.fromString(("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"))),
+                CustomerId.of(UUID.fromString(("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"))),
                 "Hans",
                 "Meier",
                 MailAddress.of("old@mail.de"),
@@ -108,7 +108,6 @@ public class CustomerServiceRESTTest {
         //given
         CreateCustomerDTO testDTO = SampleData.customerDTOHans();
 
-
         String json = objectMapper.writeValueAsString(testDTO);
         UUID idempotencyKey = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d");
 
@@ -152,7 +151,7 @@ public class CustomerServiceRESTTest {
                 .andDo(print());
 
         //then
-        Customer updated = customerRepository.findById(CustomerId.newInstance(testId)).orElseThrow(() -> new AssertionError("Customer not found in DB"));
+        Customer updated = customerRepository.findById(CustomerId.of(testId)).orElseThrow(() -> new AssertionError("Customer not found in DB"));
         assertEquals(updated.getMailAddress().getMailAddress(), mailAddressDTO.mailAddress());
 
     }
@@ -167,7 +166,7 @@ public class CustomerServiceRESTTest {
                         testId.toString()))
                 .andExpect(status().isNoContent());
         //then
-        boolean exist = customerRepository.existsById(CustomerId.newInstance(testId));
+        boolean exist = customerRepository.existsById(CustomerId.of(testId));
         assertFalse(exist);
     }
 

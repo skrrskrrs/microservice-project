@@ -15,6 +15,6 @@ public class CustomerIdConverter implements AttributeConverter<CustomerId, UUID>
 
     @Override
     public CustomerId convertToEntityAttribute(UUID dbData) {
-        return dbData == null ? null : CustomerId.newInstance(dbData);
+        return dbData == null ? null : CustomerId.of(dbData);
     }
 }

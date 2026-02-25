@@ -60,8 +60,8 @@ class CustomerServiceApplicationTests {
     @Test
     void testCustomerIdPrimitiveEquals(){
         //given
-        CustomerId customerId = CustomerId.newInstance(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
-        CustomerId customerId2 = CustomerId.newInstance(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
+        CustomerId customerId = CustomerId.of(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
+        CustomerId customerId2 = CustomerId.of(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
         //then
         assertEquals(customerId,customerId2);
     }
@@ -69,8 +69,8 @@ class CustomerServiceApplicationTests {
     @Test
     void testCustomerIdPrimitiveNotEquals(){
         //given
-        CustomerId customerId = CustomerId.newInstance(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
-        CustomerId customerId2 = CustomerId.newInstance(UUID.fromString("28bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
+        CustomerId customerId = CustomerId.of(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
+        CustomerId customerId2 = CustomerId.of(UUID.fromString("28bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
         //then
         assertNotEquals(customerId,customerId2);
     }
