@@ -46,9 +46,11 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .collect(Collectors.toList());
     }
 
-    public RegisterUserDTO registerUserDTO(RegisterUserDTO userDTO) {
-        UserEntity user = UserEntity.registerNewUser(UserNameDomainPrimitive.of(userDTO.userName()), HashedPasswordDomainPrimitive.of(userDTO.password()));
-        userRepository.save(user);
-    }
+    //TODO
+    // public RegisterUserDTO registerUserDTO(RegisterUserDTO userDTO) {
+    //        UserEntity user = UserEntity.registerNewUser(UserNameDomainPrimitive.of(userDTO.userName()), HashedPasswordDomainPrimitive.of(userDTO.password()));
+    //        userRepository.save(user);
+    //    }
+
 
 }
