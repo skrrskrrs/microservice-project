@@ -1,8 +1,10 @@
 package customer_service.user.appliaction;
 
+import customer_service.user.DTOs.RegisterUserDTO;
 import customer_service.user.domain.Role;
 import customer_service.user.domain.UserEntity;
 import customer_service.user.domain.UserRepository;
+import customer_service.user.domainprimitives.HashedPasswordDomainPrimitive;
 import customer_service.user.domainprimitives.UserNameDomainPrimitive;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -43,4 +45,10 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
     }
+
+    public RegisterUserDTO registerUserDTO(RegisterUserDTO userDTO) {
+        UserEntity user = UserEntity.registerNewUser(UserNameDomainPrimitive.of(userDTO.userName()), HashedPasswordDomainPrimitive.of(userDTO.password()));
+        userRepository.save(user);
+    }
+
 }
