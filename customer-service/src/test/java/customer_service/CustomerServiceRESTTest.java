@@ -1,7 +1,6 @@
 package customer_service;
 
 import customer_service.DTOs.CreateCustomerDTO;
-import customer_service.DTOs.HomeAddressDTO;
 import customer_service.DTOs.MailAddressDTO;
 import customer_service.customer.domain.Customer;
 import customer_service.customer.domain.CustomerRepository;
@@ -17,8 +16,6 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.containers.PostgreSQLContainer;
