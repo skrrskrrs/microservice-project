@@ -3,12 +3,8 @@ package customer_service;
 import customer_service.DTOs.CreateCustomerDTO;
 import customer_service.DTOs.HomeAddressDTO;
 import customer_service.DTOs.MailAddressDTO;
-import customer_service.customer.domain.Customer;
 import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
-import customer_service.customer.domainprimitives.UserId;
-
-import java.util.UUID;
 
 public class SampleData {
 

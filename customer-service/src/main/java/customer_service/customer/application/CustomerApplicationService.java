@@ -1,13 +1,10 @@
 package customer_service.customer.application;
 
 import customer_service.DTOs.CreateCustomerDTO;
-import customer_service.customer.domainprimitives.UserId;
 import customer_service.idempotency.application.IdempotencyApplicationService;
 import customer_service.user.appliaction.CustomUserDetailsService;
 import customer_service.user.domain.UserEntity;
-import customer_service.user.domain.UserRepository;
-import customer_service.user.domainprimitives.HashedPasswordDomainPrimitive;
-import customer_service.user.domainprimitives.UserNameDomainPrimitive;
+import customer_service.user.domainprimitives.UserId;
 import org.springframework.transaction.annotation.Transactional;
 import customer_service.DTOs.CustomerDTO;
 import customer_service.DTOs.HomeAddressDTO;
@@ -86,14 +83,16 @@ public class CustomerApplicationService {
         return new CustomerDTO(customer.getCustomerId().getId(), customer.getFirstName(), customer.getLastName(), MailAddressDTO.mailAddressAsDTO(customer.getMailAddress()), HomeAddressDTO.homeAddressAsDTO(customer.getHomeAddress()));
     }
 
-    public void changeMailAddressOfCustomer(CustomerId customerId, MailAddressDTO mailAddress) {
-        Customer customer = findCustomerById(customerId);
+    public void changeMailAddressOfCustomer(String userName, MailAddressDTO mailAddress) {
+        UserEntity user = customUserDetailsService.findUserByName(userName);
+        Customer customer = customerRepository.findCustomerByUserId(user.getId()).orElseThrow(() -> new CustomerException("Customer does not exist"));
         MailAddress updatedMailAddress = MailAddress.of(mailAddress.mailAddress());
         customer.changeMailAddress(updatedMailAddress);
     }
 
-    public void changeHomeAddressOfCustomer(CustomerId customerId, HomeAddressDTO homeAddress) {
-        Customer customer = findCustomerById(customerId);
+    public void changeHomeAddressOfCustomer(String userName, HomeAddressDTO homeAddress) {
+        UserEntity user = customUserDetailsService.findUserByName(userName);
+        Customer customer = customerRepository.findCustomerByUserId(user.getId()).orElseThrow(() -> new CustomerException("Customer does not exist"));
         HomeAddress newHomeAddress = HomeAddress.of(homeAddress.street(), homeAddress.city(), homeAddress.state(), homeAddress.zip());
         customer.changeHomeAddress(newHomeAddress);
     }

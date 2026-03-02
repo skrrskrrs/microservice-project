@@ -1,6 +1,6 @@
 package customer_service.customer.domain;
 
-import customer_service.customer.domainprimitives.UserId;
+import customer_service.user.domainprimitives.UserId;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

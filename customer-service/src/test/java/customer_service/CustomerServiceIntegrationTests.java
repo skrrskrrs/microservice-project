@@ -8,9 +8,9 @@ import customer_service.customer.domain.CustomerException;
 import customer_service.customer.domain.CustomerRepository;
 import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
-import customer_service.customer.domainprimitives.UserId;
 import customer_service.idempotency.application.IdempotencyApplicationService;
 import customer_service.idempotency.domain.IdempotencyException;
+import customer_service.user.domainprimitives.UserId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,7 +77,7 @@ public class CustomerServiceIntegrationTests {
     void changeHomeAddressOfCustomer() {
         //given
         HomeAddressDTO homeAddressDTO = new HomeAddressDTO("NewAddress","Munich","Dunno","50939");
-        customerApplicationService.changeHomeAddressOfCustomer(validCustomer.getCustomerId(), homeAddressDTO);
+        customerApplicationService.changeHomeAddressOfCustomer(validCustomer.getUserId(), homeAddressDTO);
         //when
         Customer reloaded = customerRepository
                 .findById(validCustomer.getCustomerId())
@@ -91,7 +91,7 @@ public class CustomerServiceIntegrationTests {
     void changeMailAddressOfCustomer() {
         //given
         MailAddressDTO mailAddressDTO = new MailAddressDTO("newMail@web.de");
-        customerApplicationService.changeMailAddressOfCustomer(validCustomer.getCustomerId(), mailAddressDTO);
+        customerApplicationService.changeMailAddressOfCustomer(validCustomer.getUserId(), mailAddressDTO);
         //when
         Customer reload = customerRepository
                 .findById(validCustomer.getCustomerId())

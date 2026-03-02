@@ -4,15 +4,15 @@ import customer_service.DTOs.CreateCustomerDTO;
 import customer_service.DTOs.CustomerDTO;
 import customer_service.DTOs.HomeAddressDTO;
 import customer_service.DTOs.MailAddressDTO;
-import customer_service.customer.domain.CustomerRepository;
+import customer_service.user.domainprimitives.UserId;
 import customer_service.customer.domainprimitives.CustomerId;
-import customer_service.idempotency.application.IdempotencyApplicationService;
-import customer_service.idempotency.domain.Idempotency;
-import customer_service.idempotency.domain.IdempotencyRepository;
-import customer_service.user.DTOs.RegisterUserDTO;
 import customer_service.user.appliaction.CustomUserDetailsService;
+import customer_service.user.domain.UserEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -58,18 +58,28 @@ public class CustomerRESTController {
     }
 
     @PatchMapping("/customers/{id}/mailAddress")
+    @PreAuthorize("hasRole('ADMIN') or (#id.toString() == principal.username)")
     public ResponseEntity<CustomerDTO> updateMailAddress(@PathVariable UUID id, @RequestBody MailAddressDTO mailAddress) {
-        customerApplicationService.changeMailAddressOfCustomer(CustomerId.of(id), mailAddress);
+        customerApplicationService.changeMailAddressOfCustomer(UserId.of(id), mailAddress);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/customers/{id}/homeAddress")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CustomerDTO> updateHomeAddress(@PathVariable UUID id, @RequestBody HomeAddressDTO homeAddress) {
-        customerApplicationService.changeHomeAddressOfCustomer(CustomerId.of(id), homeAddress);
+        customerApplicationService.changeHomeAddressOfCustomer(UserId.of(id), homeAddress);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PatchMapping("/customers/me/mailAddress")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Void> updateMailAddress(@AuthenticationPrincipal UserDetails userDetails, @RequestBody MailAddressDTO mailAddress) {
+        customerApplicationService.changeMailAddressOfCustomer(userDetails.getUsername(),mailAddress);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @DeleteMapping("/customers/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteCustomer(@PathVariable UUID id) {
         customerApplicationService.deleteCustomer(CustomerId.of(id));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

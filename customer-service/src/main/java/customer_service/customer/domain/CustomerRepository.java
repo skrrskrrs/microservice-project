@@ -1,8 +1,11 @@
 package customer_service.customer.domain;
 
 import customer_service.customer.domainprimitives.CustomerId;
+import customer_service.user.domainprimitives.UserId;
 import org.springframework.data.repository.CrudRepository;
 
-public interface CustomerRepository extends CrudRepository<Customer, CustomerId> {
+import java.util.Optional;
 
+public interface CustomerRepository extends CrudRepository<Customer, UserId> {
+    Optional<Customer> findCustomerByUserId(UserId userId);
 }

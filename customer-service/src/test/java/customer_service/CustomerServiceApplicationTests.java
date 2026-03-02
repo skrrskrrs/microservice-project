@@ -5,8 +5,6 @@ import customer_service.customer.domain.CustomerException;
 import customer_service.customer.domainprimitives.CustomerId;
 import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
-import customer_service.customer.domainprimitives.UserId;
-import customer_service.user.domain.Role;
 import customer_service.user.domain.UserEntity;
 import customer_service.user.domain.UserException;
 import customer_service.user.domainprimitives.HashedPasswordDomainPrimitive;
@@ -15,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -87,23 +84,32 @@ class CustomerServiceApplicationTests {
         assertThrows(UserException.class,
                 () -> UserEntity.createWithRoles(UserNameDomainPrimitive.of("")
                         , HashedPasswordDomainPrimitive.of("Secure1!")
-                        , Set.of(Role.ROLE_USER)));
+                        ,null));
 
         assertThrows(UserException.class,
-                () -> UserEntity.createWithRoles(UserNameDomainPrimitive.of("Test")
-                        , HashedPasswordDomainPrimitive.of(null)
-                        , Set.of(Role.ROLE_USER)));
+                () -> UserEntity.registerNewUser(UserNameDomainPrimitive.of("Test")
+                        , HashedPasswordDomainPrimitive.of(null)));
 
         assertThrows(UserException.class,
-                () -> UserEntity.createWithRoles(UserNameDomainPrimitive.of("Testasdasd")
-                        , HashedPasswordDomainPrimitive.of("Secure1!")
-                        , null));
+                () -> UserEntity.registerNewUser(UserNameDomainPrimitive.of("Testasdasd")
+                        , HashedPasswordDomainPrimitive.of("Secure1!")));
 
         assertThrows(UserException.class,
-                () -> UserEntity.createWithRoles(UserNameDomainPrimitive.of("Testtss")
-                        , HashedPasswordDomainPrimitive.of("Secu!")
-                        , Set.of(Role.ROLE_USER)));
+                () -> UserEntity.registerNewUser(UserNameDomainPrimitive.of("Testtss")
+                        , HashedPasswordDomainPrimitive.of("Secu!")));
 
+
+        assertThrows(UserException.class,
+                () -> UserEntity.registerNewUser(UserNameDomainPrimitive.of("")
+                        , HashedPasswordDomainPrimitive.of("Secured1!")));
+
+        assertThrows(UserException.class,
+                () -> UserEntity.registerNewUser(UserNameDomainPrimitive.of("xPeterX")
+                        , HashedPasswordDomainPrimitive.of("")));
+
+        assertThrows(UserException.class,
+                () -> UserEntity.registerNewUser(UserNameDomainPrimitive.of(null)
+                        , HashedPasswordDomainPrimitive.of("Secured1!")));
     }
 
     @Test

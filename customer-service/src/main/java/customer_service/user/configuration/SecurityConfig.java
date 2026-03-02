@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
@@ -21,7 +23,8 @@ public class SecurityConfig {
     public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
     }
-    //TODO Admin darf user anlegen, kunden darf nur sich selber sheen mit customer/me
+
+    //TODO Admin darf user anlegen, kunden darf nur sich selber sheen mit customer/me , außerdem PATCH nur user ihrer eigene Daten pahcen dürfen customer/me/homeAddress
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -34,20 +37,26 @@ public class SecurityConfig {
                         .requestMatchers("GET", "/customers").permitAll()
                         .requestMatchers("GET", "/customers/*").permitAll()
 
-                        // USER + ADMIN ENDPOINTS
+                        // ADMIN ENDPOINTS
                         .requestMatchers("POST", "/customers").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("PATCH", "/customers/*/mailAddress").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("PATCH", "/customers/*/homeAddress").hasAnyRole("USER", "ADMIN")
+
+                        // User darf nur „me“ ändern
+                        .requestMatchers("PATCH", "/customers/me/mailAddress").hasRole("USER")
+                        .requestMatchers("PATCH", "/customers/me/homeAddress").hasRole("USER")
+
 
                         // NUR ADMIN ENDPOINTS
                         .requestMatchers("DELETE", "/customers/*").hasRole("ADMIN")
+                        .requestMatchers("PATCH", "/customers/*/mailAddress").hasAnyRole("ADMIN","USER")
+                        .requestMatchers("PATCH", "/customers/*/homeAddress").hasAnyRole("ADMIN","USER")
 
                         // Alle anderen Requests müssen authentifiziert sein
                         .anyRequest().authenticated()
                 )
 
                 // Basic Authentication aktivieren
-                .httpBasic(httpBasic -> {})
+                .httpBasic(httpBasic -> {
+                })
 
                 // Stateless Session Management
                 .sessionManagement(session ->
