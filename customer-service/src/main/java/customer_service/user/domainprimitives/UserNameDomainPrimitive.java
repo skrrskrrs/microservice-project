@@ -1,5 +1,6 @@
 package customer_service.user.domainprimitives;
 
+import customer_service.customer.domain.CustomerException;
 import customer_service.user.domain.UserException;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -16,6 +17,7 @@ public class UserNameDomainPrimitive {
 
     protected UserNameDomainPrimitive(String userName) {
         if(userName == null || userName.isBlank()) throw new UserException("Username is null or empty");
+        if (userName.length() < 5) throw new UserException("Username too short");
         this.userName = userName;
     }
 

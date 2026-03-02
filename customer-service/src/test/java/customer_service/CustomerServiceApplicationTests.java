@@ -6,12 +6,19 @@ import customer_service.customer.domainprimitives.CustomerId;
 import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
 import customer_service.customer.domainprimitives.UserId;
+import customer_service.user.domain.Role;
+import customer_service.user.domain.UserEntity;
+import customer_service.user.domain.UserException;
+import customer_service.user.domainprimitives.HashedPasswordDomainPrimitive;
+import customer_service.user.domainprimitives.UserNameDomainPrimitive;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Set;
 import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @ActiveProfiles("test")
@@ -24,81 +31,152 @@ class CustomerServiceApplicationTests {
         //then
         assertThrows(CustomerException.class,
                 () -> Customer.of("Eeat"
-                        ,"Test"
-                        ,MailAddress.of("asdsad.de")
-                        ,HomeAddress.of("Teststreet","Cologne","Westfalen","50937"),
+                        , "Test"
+                        , MailAddress.of("asdsad.de")
+                        , HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937"),
                         UserId.of(UUID.fromString(""))));
 
         assertThrows(CustomerException.class,
                 () -> Customer.of("Eeat"
-                        ,"Test"
-                        ,MailAddress.of("asdsa@web.de")
-                        ,HomeAddress.of(null,null,null,null),
+                        , "Test"
+                        , MailAddress.of("asdsa@web.de")
+                        , HomeAddress.of(null, null, null, null),
                         null));
 
         assertThrows(CustomerException.class,
                 () -> Customer.of("Eeat"
-                        ,"Test"
-                        ,MailAddress.of("asdsa@web.de")
-                        ,HomeAddress.of("","Cologne","Westfalen","50937"),
-                        UserId.of(UUID.fromString("c4dab129-e51c-4406-9376-ca2d81bc2640"))));
+                        , "Test"
+                        , MailAddress.of("asdsa@web.de")
+                        , HomeAddress.of("", "Cologne", "Westfalen", "50937"),
+                        UserId.of(UUID.randomUUID())));
 
+        assertThrows(CustomerException.class,
+                () -> Customer.of(""
+                        , "Test"
+                        , MailAddress.of("asdsa@web.de")
+                        , HomeAddress.of("Test", "Cologne", "Westfalen", "50937"),
+                        UserId.of(UUID.randomUUID())));
 
+        assertThrows(CustomerException.class,
+                () -> Customer.of("Peter"
+                        , ""
+                        , MailAddress.of("asdsa@web.de")
+                        , HomeAddress.of("Test", "Cologne", "Westfalen", "50937"),
+                        UserId.of(UUID.randomUUID())));
+    }
+
+    @Test
+    void shouldFailBecauseNoExceptionThrown() {
+        assertThrows(UserException.class,
+                () -> {
+                    UserNameDomainPrimitive.of("Tes");
+                }
+        );
+
+        assertThrows(UserException.class,
+                () -> {
+                    HashedPasswordDomainPrimitive.of("Sec!");
+                }
+        );
 
     }
 
     @Test
-    void testCustomerIdPrimitiveEquals(){
+    void createInvalidUser() {
+
+        assertThrows(UserException.class,
+                () -> UserEntity.createWithRoles(UserNameDomainPrimitive.of("")
+                        , HashedPasswordDomainPrimitive.of("Secure1!")
+                        , Set.of(Role.ROLE_USER)));
+
+        assertThrows(UserException.class,
+                () -> UserEntity.createWithRoles(UserNameDomainPrimitive.of("Test")
+                        , HashedPasswordDomainPrimitive.of(null)
+                        , Set.of(Role.ROLE_USER)));
+
+        assertThrows(UserException.class,
+                () -> UserEntity.createWithRoles(UserNameDomainPrimitive.of("Testasdasd")
+                        , HashedPasswordDomainPrimitive.of("Secure1!")
+                        , null));
+
+        assertThrows(UserException.class,
+                () -> UserEntity.createWithRoles(UserNameDomainPrimitive.of("Testtss")
+                        , HashedPasswordDomainPrimitive.of("Secu!")
+                        , Set.of(Role.ROLE_USER)));
+
+    }
+
+    @Test
+    void testHashedPasswordPrimitiveIsEquals() {
+        //given
+        HashedPasswordDomainPrimitive hashedPasswordPrimitive = HashedPasswordDomainPrimitive.of("Secure1!");
+        HashedPasswordDomainPrimitive hashedPasswordPrimitive2 = HashedPasswordDomainPrimitive.of("Secure1!");
+        //then
+        assertEquals(hashedPasswordPrimitive, hashedPasswordPrimitive2);
+    }
+
+    @Test
+    void testHashedPasswordPrimitiveIsNotEquals() {
+        //given
+        HashedPasswordDomainPrimitive hashedPasswordPrimitive = HashedPasswordDomainPrimitive.of("Secure1!");
+        HashedPasswordDomainPrimitive hashedPasswordPrimitive2 = HashedPasswordDomainPrimitive.of("Secure2!");
+        //then
+        assertNotEquals(hashedPasswordPrimitive, hashedPasswordPrimitive2);
+    }
+
+    @Test
+    void testCustomerIdPrimitiveEquals() {
         //given
         CustomerId customerId = CustomerId.of(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
         CustomerId customerId2 = CustomerId.of(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
         //then
-        assertEquals(customerId,customerId2);
+        assertEquals(customerId, customerId2);
     }
 
     @Test
-    void testCustomerIdPrimitiveNotEquals(){
+    void testCustomerIdPrimitiveNotEquals() {
         //given
         CustomerId customerId = CustomerId.of(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
         CustomerId customerId2 = CustomerId.of(UUID.fromString("28bddc7b-5a4f-460e-a072-63ba90b7cf1d"));
         //then
-        assertNotEquals(customerId,customerId2);
+        assertNotEquals(customerId, customerId2);
     }
 
     @Test
-    void testMailAddressDomainPrimitiveEquals(){
+    void testMailAddressDomainPrimitiveEquals() {
         //given
         MailAddress mailAddress = MailAddress.of("test@test.de");
         MailAddress mailAddress2 = MailAddress.of("test@test.de");
         //then
-        assertEquals(mailAddress,mailAddress2);;
+        assertEquals(mailAddress, mailAddress2);
+        ;
     }
 
     @Test
-    void homeAddressDomainPrimitiveEquals(){
+    void homeAddressDomainPrimitiveEquals() {
         //given
-        HomeAddress homeAddress = HomeAddress.of("Teststreet","Cologne","Westfalen","50937");
-        HomeAddress homeAddress2 = HomeAddress.of("Teststreet","Cologne","Westfalen","50937");
+        HomeAddress homeAddress = HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937");
+        HomeAddress homeAddress2 = HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937");
         //then
-        assertEquals(homeAddress,homeAddress2);
+        assertEquals(homeAddress, homeAddress2);
     }
 
     @Test
-    void testMailAddressDomainPrimitiveNotEquals(){
+    void testMailAddressDomainPrimitiveNotEquals() {
         //given
         MailAddress mailAddress = MailAddress.of("test@test.de");
         MailAddress mailAddress2 = MailAddress.of("test@tett.de");
         //then
-        assertNotEquals(mailAddress,mailAddress2);
+        assertNotEquals(mailAddress, mailAddress2);
     }
 
     @Test
-    void testHomeAddressDomainPrimitiveNotEquals(){
+    void testHomeAddressDomainPrimitiveNotEquals() {
         //given
-        HomeAddress homeAddress = HomeAddress.of("Teststreet","Cologne","Westfalen","50937");
-        HomeAddress homeAddress2 = HomeAddress.of("Teststreet","Cologn","Westfalen","50937");
+        HomeAddress homeAddress = HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937");
+        HomeAddress homeAddress2 = HomeAddress.of("Teststreet", "Cologn", "Westfalen", "50937");
         //then
-        assertNotEquals(homeAddress,homeAddress2);
+        assertNotEquals(homeAddress, homeAddress2);
     }
 
 

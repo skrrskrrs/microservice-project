@@ -1,5 +1,7 @@
 package customer_service.user.domainprimitives;
 
+import customer_service.customer.domain.CustomerException;
+import customer_service.user.domain.UserException;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -14,13 +16,13 @@ public class HashedPasswordDomainPrimitive {
     private String hashedPassword;
 
     protected HashedPasswordDomainPrimitive(String hashedPassword) {
-        if(hashedPassword == null || hashedPassword.isBlank()) throw new IllegalArgumentException("password cannot be null or empty");
-        if(hashedPassword.length() < 8) throw new IllegalArgumentException("password must be at least 8 characters");
+        if(hashedPassword == null || hashedPassword.isBlank()) throw new UserException("password cannot be null or empty");
+        if(hashedPassword.length() < 8) throw new UserException("password must be at least 8 characters");
 
         String regex =  "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$";
 
         if(!hashedPassword.matches(regex)){
-            throw new IllegalArgumentException("Password must contain upper, lower, digit and special character");
+            throw new UserException("Password must contain upper, lower, digit and special character");
         }
 
         this.hashedPassword = hashedPassword;
