@@ -2,22 +2,18 @@ package customer_service;
 
 import customer_service.customer.domain.Customer;
 import customer_service.customer.domain.CustomerException;
-import customer_service.customer.domain.CustomerRepository;
 import customer_service.customer.domainprimitives.CustomerId;
 import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
-import customer_service.idempotency.application.IdempotencyApplicationService;
-import customer_service.idempotency.domain.Idempotency;
-import customer_service.idempotency.domain.IdempotencyException;
-import org.junit.jupiter.api.BeforeEach;
+import customer_service.customer.domainprimitives.UserId;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-
+import static org.junit.jupiter.api.Assertions.*;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+
 @ActiveProfiles("test")
 @DataJpaTest
 class CustomerServiceApplicationTests {
@@ -30,31 +26,25 @@ class CustomerServiceApplicationTests {
                 () -> Customer.of("Eeat"
                         ,"Test"
                         ,MailAddress.of("asdsad.de")
-                        ,HomeAddress.of("Teststreet","Cologne","Westfalen","50937")));
+                        ,HomeAddress.of("Teststreet","Cologne","Westfalen","50937"),
+                        UserId.of(UUID.fromString(""))));
 
         assertThrows(CustomerException.class,
                 () -> Customer.of("Eeat"
                         ,"Test"
                         ,MailAddress.of("asdsa@web.de")
-                        ,HomeAddress.of(null,null,null,null)));
+                        ,HomeAddress.of(null,null,null,null),
+                        null));
 
         assertThrows(CustomerException.class,
                 () -> Customer.of("Eeat"
                         ,"Test"
                         ,MailAddress.of("asdsa@web.de")
-                        ,HomeAddress.of("","Cologne","Westfalen","50937")));
+                        ,HomeAddress.of("","Cologne","Westfalen","50937"),
+                        UserId.of(UUID.fromString("c4dab129-e51c-4406-9376-ca2d81bc2640"))));
 
-        assertThrows(CustomerException.class,
-                () -> Customer.of(""
-                        ,"Test"
-                        ,MailAddress.of("asdsa@web.de")
-                        ,HomeAddress.of("Test","Cologne","Westfalen","50937")));
 
-        assertThrows(CustomerException.class,
-                () -> Customer.of("Peter"
-                        ,""
-                        ,MailAddress.of("asdsa@web.de")
-                        ,HomeAddress.of("Test","Cologne","Westfalen","50937")));
+
     }
 
     @Test

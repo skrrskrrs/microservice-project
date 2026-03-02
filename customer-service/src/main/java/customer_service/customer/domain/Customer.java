@@ -1,8 +1,7 @@
 package customer_service.customer.domain;
 
-import jakarta.persistence.Embedded;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
+import customer_service.customer.domainprimitives.UserId;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,8 +23,13 @@ public class Customer {
     private MailAddress mailAddress;
     @Embedded
     private HomeAddress homeAddress;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "id", column = @Column(name = "user_id")) // umbenannt
+    })
+    private UserId userId;
 
-    protected Customer(String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
+    protected Customer(String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress,UserId userId ) {
         if (firstName == null || lastName == null || mailAddress == null || homeAddress == null)
             throw new CustomerException("CustomerId and/or MailAddress are null");
         if (firstName.isEmpty() || lastName.isEmpty()) throw new CustomerException("First Name or Last Name are Empty");
@@ -34,6 +38,7 @@ public class Customer {
         this.lastName = lastName;
         this.mailAddress = mailAddress;
         this.homeAddress = homeAddress;
+        this.userId = userId;
     }
 
     protected Customer(CustomerId id, String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
@@ -51,8 +56,8 @@ public class Customer {
         return new Customer(id, firstName, lastName, mailAddress, homeAddress);
     }
 
-    public static Customer of(String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
-        return new Customer(firstName, lastName, mailAddress, homeAddress);
+    public static Customer of(String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress, UserId userId) {
+        return new Customer(firstName, lastName, mailAddress, homeAddress, userId);
     }
 
     public void changeHomeAddress(HomeAddress homeAddress) {

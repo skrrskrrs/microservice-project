@@ -1,8 +1,10 @@
 package customer_service.user.appliaction;
 
+import customer_service.DTOs.CreateCustomerDTO;
 import customer_service.user.DTOs.RegisterUserDTO;
 import customer_service.user.domain.Role;
 import customer_service.user.domain.UserEntity;
+import customer_service.user.domain.UserException;
 import customer_service.user.domain.UserRepository;
 import customer_service.user.domainprimitives.HashedPasswordDomainPrimitive;
 import customer_service.user.domainprimitives.UserNameDomainPrimitive;
@@ -13,11 +15,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
@@ -45,6 +50,18 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .map(role -> new SimpleGrantedAuthority(role.name()))
                 .collect(Collectors.toList());
     }
+
+    public UserEntity createUser(CreateCustomerDTO createCustomerDTO) {
+        UserEntity user = UserEntity.registerNewUser(UserNameDomainPrimitive.of(createCustomerDTO.userName()),HashedPasswordDomainPrimitive.of(createCustomerDTO.password()));
+        userRepository.save(user);
+        return user;
+    }
+
+    public void saveUser(UserEntity user) {
+        userRepository.save(user);
+    }
+
+
 
     //TODO
     // public RegisterUserDTO registerUserDTO(RegisterUserDTO userDTO) {

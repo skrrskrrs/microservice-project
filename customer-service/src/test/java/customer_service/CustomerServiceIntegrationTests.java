@@ -8,6 +8,7 @@ import customer_service.customer.domain.CustomerException;
 import customer_service.customer.domain.CustomerRepository;
 import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
+import customer_service.customer.domainprimitives.UserId;
 import customer_service.idempotency.application.IdempotencyApplicationService;
 import customer_service.idempotency.domain.IdempotencyException;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +55,8 @@ public class CustomerServiceIntegrationTests {
         validCustomer = Customer.of("Peter",
                 "Meier",
                 MailAddress.of("test@valid.de"),
-                HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937"));
+                HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937"),
+                UserId.of(UUID.randomUUID()));
         customerRepository.save(validCustomer);
 
     }

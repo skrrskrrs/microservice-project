@@ -1,9 +1,14 @@
 package customer_service.customer.application;
 
+import customer_service.DTOs.CreateCustomerDTO;
+import customer_service.customer.domainprimitives.UserId;
 import customer_service.idempotency.application.IdempotencyApplicationService;
-import customer_service.idempotency.domain.Idempotency;
-import customer_service.idempotency.domain.IdempotencyRepository;
-import jakarta.transaction.Transactional;
+import customer_service.user.appliaction.CustomUserDetailsService;
+import customer_service.user.domain.UserEntity;
+import customer_service.user.domain.UserRepository;
+import customer_service.user.domainprimitives.HashedPasswordDomainPrimitive;
+import customer_service.user.domainprimitives.UserNameDomainPrimitive;
+import org.springframework.transaction.annotation.Transactional;
 import customer_service.DTOs.CustomerDTO;
 import customer_service.DTOs.HomeAddressDTO;
 import customer_service.DTOs.MailAddressDTO;
@@ -25,10 +30,12 @@ public class CustomerApplicationService {
 
     private final CustomerRepository customerRepository;
     private final IdempotencyApplicationService idempotencyApplicationService;
+    private final CustomUserDetailsService customUserDetailsService;
 
-    public CustomerApplicationService(CustomerRepository customerRepository, IdempotencyApplicationService idempotencyApplicationService) {
+    public CustomerApplicationService(CustomerRepository customerRepository, IdempotencyApplicationService idempotencyApplicationService, CustomUserDetailsService customUserDetailsService) {
         this.customerRepository = customerRepository;
         this.idempotencyApplicationService = idempotencyApplicationService;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     public List<CustomerDTO> getAllCustomers() {
@@ -61,8 +68,9 @@ public class CustomerApplicationService {
         );
     }
 
-    public CustomerDTO createCustomer(UUID idempotencyKey, CustomerDTO customerDTO) {
+    public CustomerDTO createCustomer(UUID idempotencyKey, CreateCustomerDTO customerDTO) {
         idempotencyApplicationService.ensureIdempotencyOnce(idempotencyKey);
+        UserEntity user = customUserDetailsService.createUser(customerDTO);
         Customer customer = Customer.of(
                 customerDTO.firstName(),
                 customerDTO.lastName(),
@@ -70,7 +78,8 @@ public class CustomerApplicationService {
                 HomeAddress.of(customerDTO.homeAddressDTO().street(),
                         customerDTO.homeAddressDTO().city(),
                         customerDTO.homeAddressDTO().state(),
-                        customerDTO.homeAddressDTO().zip())
+                        customerDTO.homeAddressDTO().zip()),
+                        UserId.of(user.getId().getId())
         );
         customerRepository.save(customer);
 

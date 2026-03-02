@@ -6,21 +6,17 @@ import customer_service.DTOs.MailAddressDTO;
 import customer_service.customer.domain.Customer;
 import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
+import customer_service.customer.domainprimitives.UserId;
+
+import java.util.UUID;
 
 public class SampleData {
 
-    public static Customer customerHans() {
-        return Customer.of(
-                "Hans",
-                "Hans",
-                MailAddress.of("mailAddress@web.de"),
-                HomeAddress.of("testStreet", "testCity", "testState", "testZip")
-        );
-    }
-
     public static CreateCustomerDTO customerDTOHans() {
-        return new CreateCustomerDTO("Hans",
-                "Meier",
+        return new CreateCustomerDTO("HansX",
+                "1234",
+                "Hans",
+                "Peter",
                 MailAddressDTO.mailAddressAsDTO(MailAddress.of("test@web.de")),
                 HomeAddressDTO.homeAddressAsDTO(HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937"))
         );
