@@ -8,6 +8,7 @@ import customer_service.customer.domainprimitives.MailAddress;
 import customer_service.user.domain.UserEntity;
 import customer_service.user.domain.UserException;
 import customer_service.user.domainprimitives.HashedPasswordDomainPrimitive;
+import customer_service.user.domainprimitives.UserId;
 import customer_service.user.domainprimitives.UserNameDomainPrimitive;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

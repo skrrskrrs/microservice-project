@@ -10,7 +10,11 @@ import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
 import customer_service.idempotency.application.IdempotencyApplicationService;
 import customer_service.idempotency.domain.IdempotencyException;
+import customer_service.user.domain.UserEntity;
+import customer_service.user.domain.UserRepository;
+import customer_service.user.domainprimitives.HashedPasswordDomainPrimitive;
 import customer_service.user.domainprimitives.UserId;
+import customer_service.user.domainprimitives.UserNameDomainPrimitive;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +37,18 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test-container")
 public class CustomerServiceIntegrationTests {
     private Customer validCustomer;
+    private UserEntity validUserEntity;
     private final CustomerRepository customerRepository;
     private final CustomerApplicationService customerApplicationService;
     private final IdempotencyApplicationService idempotencyApplicationService;
+    private final UserRepository userRepository;
 
     @Autowired
-    CustomerServiceIntegrationTests(CustomerRepository customerRepository, CustomerApplicationService customerApplicationService, IdempotencyApplicationService idempotencyApplicationService) {
+    CustomerServiceIntegrationTests(CustomerRepository customerRepository, CustomerApplicationService customerApplicationService, IdempotencyApplicationService idempotencyApplicationService, UserRepository userRepository) {
         this.customerRepository = customerRepository;
         this.customerApplicationService = customerApplicationService;
         this.idempotencyApplicationService = idempotencyApplicationService;
+        this.userRepository = userRepository;
     }
 
     @Container
@@ -52,11 +59,15 @@ public class CustomerServiceIntegrationTests {
 
     @BeforeEach
     void setUp() {
+        validUserEntity = UserEntity.registerNewUser(UserNameDomainPrimitive.of("xPeterx")
+        ,HashedPasswordDomainPrimitive.of("Secured!"));
+        userRepository.save(validUserEntity);
+
         validCustomer = Customer.of("Peter",
                 "Meier",
                 MailAddress.of("test@valid.de"),
                 HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937"),
-                UserId.of(UUID.randomUUID()));
+                UserId.of(validUserEntity.getId().getId()));
         customerRepository.save(validCustomer);
 
     }
@@ -77,7 +88,7 @@ public class CustomerServiceIntegrationTests {
     void changeHomeAddressOfCustomer() {
         //given
         HomeAddressDTO homeAddressDTO = new HomeAddressDTO("NewAddress","Munich","Dunno","50939");
-        customerApplicationService.changeHomeAddressOfCustomer(validCustomer.getUserId(), homeAddressDTO);
+        customerApplicationService.changeHomeAddressOfCustomer(validUserEntity.getUserName().getUserName(), homeAddressDTO);
         //when
         Customer reloaded = customerRepository
                 .findById(validCustomer.getCustomerId())
@@ -91,7 +102,7 @@ public class CustomerServiceIntegrationTests {
     void changeMailAddressOfCustomer() {
         //given
         MailAddressDTO mailAddressDTO = new MailAddressDTO("newMail@web.de");
-        customerApplicationService.changeMailAddressOfCustomer(validCustomer.getUserId(), mailAddressDTO);
+        customerApplicationService.changeMailAddressOfCustomer(validUserEntity.getUserName().getUserName(), mailAddressDTO);
         //when
         Customer reload = customerRepository
                 .findById(validCustomer.getCustomerId())
