@@ -97,6 +97,12 @@ public class CustomerApplicationService {
         customer.changeHomeAddress(newHomeAddress);
     }
 
+    public void changeHomeAddressOfCustomerAsAdmin(UUID id, HomeAddressDTO homeAddress) {
+        Customer customer = customerRepository.findCustomerByUserId(UserId.of(id)).orElseThrow(() -> new CustomerException("Customer does not exist"));
+        HomeAddress newHomeAddress = HomeAddress.of(homeAddress.street(), homeAddress.city(), homeAddress.state(), homeAddress.zip());
+        customer.changeHomeAddress(newHomeAddress);
+    }
+
     public void deleteCustomer(CustomerId customerId) {
         customerRepository.deleteById(customerId);
     }

@@ -57,17 +57,11 @@ public class CustomerRESTController {
                 .body(createCustomer);
     }
 
-    @PatchMapping("/customers/{id}/mailAddress")
-    @PreAuthorize("hasRole('ADMIN') or (#id.toString() == principal.username)")
-    public ResponseEntity<CustomerDTO> updateMailAddress(@PathVariable UUID id, @RequestBody MailAddressDTO mailAddress) {
-        customerApplicationService.changeMailAddressOfCustomer(UserId.of(id), mailAddress);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 
     @PatchMapping("/customers/{id}/homeAddress")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CustomerDTO> updateHomeAddress(@PathVariable UUID id, @RequestBody HomeAddressDTO homeAddress) {
-        customerApplicationService.changeHomeAddressOfCustomer(UserId.of(id), homeAddress);
+        customerApplicationService.changeHomeAddressOfCustomerAsAdmin(id, homeAddress);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -75,6 +69,13 @@ public class CustomerRESTController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> updateMailAddress(@AuthenticationPrincipal UserDetails userDetails, @RequestBody MailAddressDTO mailAddress) {
         customerApplicationService.changeMailAddressOfCustomer(userDetails.getUsername(),mailAddress);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping("/customers/me/homeAddress")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Void> updateHomeAddress(@AuthenticationPrincipal UserDetails userDetails, @RequestBody HomeAddressDTO homeAddress) {
+        customerApplicationService.changeHomeAddressOfCustomer(userDetails.getUsername(), homeAddress);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
