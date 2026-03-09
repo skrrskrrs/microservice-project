@@ -18,7 +18,7 @@ public class UserId {
 
     protected UserId(UUID id) {
         if(id == null ) throw new UserException("User ID cannot be null");
-        this.id = UUID.randomUUID();
+        this.id = id;
     }
 
     public static UserId of(UUID id) {

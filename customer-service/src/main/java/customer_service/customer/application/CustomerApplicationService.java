@@ -2,7 +2,6 @@ package customer_service.customer.application;
 
 import customer_service.DTOs.CreateCustomerDTO;
 import customer_service.idempotency.application.IdempotencyApplicationService;
-import customer_service.user.appliaction.CustomUserDetailsService;
 import customer_service.user.domain.UserEntity;
 import customer_service.user.domainprimitives.UserId;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +26,12 @@ public class CustomerApplicationService {
 
     private final CustomerRepository customerRepository;
     private final IdempotencyApplicationService idempotencyApplicationService;
-    private final CustomUserDetailsService customUserDetailsService;
+    private final UserDetailsServiceCustomer userDetailsServiceCustomer;
 
-    public CustomerApplicationService(CustomerRepository customerRepository, IdempotencyApplicationService idempotencyApplicationService, CustomUserDetailsService customUserDetailsService) {
+    public CustomerApplicationService(CustomerRepository customerRepository, IdempotencyApplicationService idempotencyApplicationService, UserDetailsServiceCustomer userDetailsServiceCustomer) {
         this.customerRepository = customerRepository;
         this.idempotencyApplicationService = idempotencyApplicationService;
-        this.customUserDetailsService = customUserDetailsService;
+        this.userDetailsServiceCustomer = userDetailsServiceCustomer;
     }
 
     public List<CustomerDTO> getAllCustomers() {
@@ -67,7 +66,7 @@ public class CustomerApplicationService {
 
     public CustomerDTO createCustomer(UUID idempotencyKey, CreateCustomerDTO customerDTO) {
         idempotencyApplicationService.ensureIdempotencyOnce(idempotencyKey);
-        UserEntity user = customUserDetailsService.createUser(customerDTO);
+        UserEntity user = userDetailsServiceCustomer.createUser(customerDTO);
         Customer customer = Customer.of(
                 customerDTO.firstName(),
                 customerDTO.lastName(),
@@ -84,14 +83,14 @@ public class CustomerApplicationService {
     }
 
     public void changeMailAddressOfCustomer(String userName, MailAddressDTO mailAddress) {
-        UserEntity user = customUserDetailsService.findUserByName(userName);
+        UserEntity user = userDetailsServiceCustomer.findUserByName(userName);
         Customer customer = customerRepository.findCustomerByUserId(user.getId()).orElseThrow(() -> new CustomerException("Customer does not exist"));
         MailAddress updatedMailAddress = MailAddress.of(mailAddress.mailAddress());
         customer.changeMailAddress(updatedMailAddress);
     }
 
     public void changeHomeAddressOfCustomer(String userName, HomeAddressDTO homeAddress) {
-        UserEntity user = customUserDetailsService.findUserByName(userName);
+        UserEntity user = userDetailsServiceCustomer.findUserByName(userName);
         Customer customer = customerRepository.findCustomerByUserId(user.getId()).orElseThrow(() -> new CustomerException("Customer does not exist"));
         HomeAddress newHomeAddress = HomeAddress.of(homeAddress.street(), homeAddress.city(), homeAddress.state(), homeAddress.zip());
         customer.changeHomeAddress(newHomeAddress);

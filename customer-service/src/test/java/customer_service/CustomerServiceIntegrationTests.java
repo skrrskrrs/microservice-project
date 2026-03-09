@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
 import java.util.Optional;
 import java.util.UUID;
 
@@ -60,7 +59,7 @@ public class CustomerServiceIntegrationTests {
     @BeforeEach
     void setUp() {
         validUserEntity = UserEntity.registerNewUser(UserNameDomainPrimitive.of("xPeterx")
-        ,HashedPasswordDomainPrimitive.of("Secured!"));
+                ,HashedPasswordDomainPrimitive.of("Test@2026"));
         userRepository.save(validUserEntity);
 
         validCustomer = Customer.of("Peter",
@@ -69,7 +68,6 @@ public class CustomerServiceIntegrationTests {
                 HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937"),
                 UserId.of(validUserEntity.getId().getId()));
         customerRepository.save(validCustomer);
-
     }
 
     @Test

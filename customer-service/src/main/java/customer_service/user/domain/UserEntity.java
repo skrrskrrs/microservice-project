@@ -30,7 +30,7 @@ public class UserEntity {
     private boolean isEnabled;
 
     protected UserEntity(UserNameDomainPrimitive userName, HashedPasswordDomainPrimitive hashedPassword, Set<Role> roles, boolean isEnabled) {
-        if(id==null || userName==null || hashedPassword==null || roles==null) throw new UserException("Id, username, hashedPassword, roles is null");
+        if(userName==null || hashedPassword==null || roles==null) throw new UserException("Id, username, hashedPassword, roles is null");
         this.id = UserId.of(UUID.randomUUID());
         this.userName = userName;
         this.hashedPassword = hashedPassword;

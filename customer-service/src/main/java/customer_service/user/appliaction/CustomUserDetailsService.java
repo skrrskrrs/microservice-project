@@ -1,12 +1,12 @@
 package customer_service.user.appliaction;
 
 import customer_service.DTOs.CreateCustomerDTO;
+import customer_service.customer.application.UserDetailsServiceCustomer;
 import customer_service.user.domain.Role;
 import customer_service.user.domain.UserEntity;
 import customer_service.user.domain.UserException;
 import customer_service.user.domain.UserRepository;
 import customer_service.user.domainprimitives.HashedPasswordDomainPrimitive;
-import customer_service.user.domainprimitives.UserId;
 import customer_service.user.domainprimitives.UserNameDomainPrimitive;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,14 +17,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Collection;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService, UserDetailsServiceCustomer {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -54,6 +52,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public UserEntity createUser(CreateCustomerDTO createCustomerDTO) {
         String encodedPassword = passwordEncoder.encode(createCustomerDTO.password());
         UserEntity user = UserEntity.registerNewUser(UserNameDomainPrimitive.of(createCustomerDTO.userName()),HashedPasswordDomainPrimitive.of(encodedPassword));
@@ -65,6 +64,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    @Override
     public UserEntity findUserByName(String userName){
         return userRepository.findByUserName(UserNameDomainPrimitive.of(userName)).orElseThrow(() -> new UserException("USer does not exist"));
     }
