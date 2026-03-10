@@ -1,10 +1,7 @@
 package customer_service.user.configuration;
 
-import customer_service.customer.application.UserDetailsServiceCustomer;
-import customer_service.user.appliaction.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -20,12 +17,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-
-    private final CustomUserDetailsService customUserDetailsService;
-
-    public SecurityConfig(@Lazy CustomUserDetailsService customUserDetailsService) {
-       this.customUserDetailsService = customUserDetailsService;
-    }
 
 
     //TODO Admin darf user anlegen, kunden darf nur sich selber sheen mit customer/me , außerdem PATCH nur user ihrer eigene Daten pahcen dürfen customer/me/homeAddress
@@ -71,9 +62,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider authenticationProvider(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(customUserDetailsService);
+        authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
