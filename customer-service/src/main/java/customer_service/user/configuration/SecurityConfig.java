@@ -2,6 +2,7 @@ package customer_service.user.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -28,24 +29,12 @@ public class SecurityConfig {
 
                 // Authorization Rules
                 .authorizeHttpRequests(auth -> auth
-                        // ÖFFENTLICHE ENDPOINTS
-                        .requestMatchers("GET", "/customers").permitAll()
-                        .requestMatchers("GET", "/customers/*").permitAll()
+                        // Public endpoints
+                        .requestMatchers(HttpMethod.GET, "/customers/**").permitAll()
 
-                        // ADMIN ENDPOINTS
-                        .requestMatchers("POST", "/customers").hasAnyRole("USER", "ADMIN")
+                        // Login / Registrierung
+                        .requestMatchers(HttpMethod.POST, "/customers").permitAll()
 
-                        // User darf nur „me“ ändern
-                        .requestMatchers("PATCH", "/customers/me/mailAddress").hasRole("USER")
-                        .requestMatchers("PATCH", "/customers/me/homeAddress").hasRole("USER")
-
-
-                        // NUR ADMIN ENDPOINTS
-                        .requestMatchers("DELETE", "/customers/*").hasRole("ADMIN")
-                        .requestMatchers("PATCH", "/customers/*/mailAddress").hasAnyRole("ADMIN","USER")
-                        .requestMatchers("PATCH", "/customers/*/homeAddress").hasAnyRole("ADMIN","USER")
-
-                        // Alle anderen Requests müssen authentifiziert sein
                         .anyRequest().authenticated()
                 )
 
