@@ -41,7 +41,7 @@ public class Customer {
         this.userId = userId;
     }
 
-    protected Customer(CustomerId id, String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
+    protected Customer(CustomerId id, String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress, UserId userId) {
         if (firstName == null || lastName == null || mailAddress == null || homeAddress == null)
             throw new CustomerException("CustomerId and/or MailAddress are null");
         if (firstName.isEmpty() || lastName.isEmpty()) throw new CustomerException("First Name or Last Name are Empty");
@@ -50,10 +50,11 @@ public class Customer {
         this.lastName = lastName;
         this.mailAddress = mailAddress;
         this.homeAddress = homeAddress;
+        this.userId = userId;
     }
 
-    public static Customer withId(CustomerId id, String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress) {
-        return new Customer(id, firstName, lastName, mailAddress, homeAddress);
+    public static Customer withId(CustomerId id, String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress, UserId userId) {
+        return new Customer(id, firstName, lastName, mailAddress, homeAddress, userId);
     }
 
     public static Customer of(String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress, UserId userId) {

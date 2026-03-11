@@ -97,13 +97,19 @@ public class CustomerApplicationService {
     }
 
     public void changeHomeAddressOfCustomerAsAdmin(UUID id, HomeAddressDTO homeAddress) {
-        Customer customer = customerRepository.findCustomerByUserId(UserId.of(id)).orElseThrow(() -> new CustomerException("Customer does not exist"));
+        Customer customer = customerRepository.findById(CustomerId.of(id)).orElseThrow(() -> new CustomerException("Customer does not exist"));
         HomeAddress newHomeAddress = HomeAddress.of(homeAddress.street(), homeAddress.city(), homeAddress.state(), homeAddress.zip());
         customer.changeHomeAddress(newHomeAddress);
     }
 
-    public void deleteCustomer(CustomerId customerId) {
-        customerRepository.deleteById(customerId);
+    public void changeMailAddressOfCustomerAsAdmin(UUID id, MailAddressDTO mailAddressDTO) {
+        Customer customer = customerRepository.findById(CustomerId.of(id)).orElseThrow(() -> new CustomerException("Customer does not exist"));
+        MailAddress newMailAddress = MailAddress.of(mailAddressDTO.mailAddress());
+        customer.changeMailAddress(newMailAddress);
+    }
+
+    public void deleteCustomer(UUID id) {
+        customerRepository.deleteById(CustomerId.of(id));
     }
 
 }

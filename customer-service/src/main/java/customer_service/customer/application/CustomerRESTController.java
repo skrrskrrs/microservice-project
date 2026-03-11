@@ -60,8 +60,15 @@ public class CustomerRESTController {
 
     @PatchMapping("/customers/{id}/homeAddress")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CustomerDTO> updateHomeAddress(@PathVariable UUID id, @RequestBody HomeAddressDTO homeAddress) {
+    public ResponseEntity<Void> updateHomeAddressAsAdmin(@PathVariable UUID id, @RequestBody HomeAddressDTO homeAddress) {
         customerApplicationService.changeHomeAddressOfCustomerAsAdmin(id, homeAddress);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("/customers/{id}/mailAddress")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateMailAddressAsAdmin(@PathVariable UUID id, @RequestBody MailAddressDTO mailAddressDTO) {
+        customerApplicationService.changeMailAddressOfCustomerAsAdmin(id, mailAddressDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -69,20 +76,20 @@ public class CustomerRESTController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> updateMailAddress(@AuthenticationPrincipal UserDetails userDetails, @RequestBody MailAddressDTO mailAddress) {
         customerApplicationService.changeMailAddressOfCustomer(userDetails.getUsername(),mailAddress);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/customers/me/homeAddress")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> updateHomeAddress(@AuthenticationPrincipal UserDetails userDetails, @RequestBody HomeAddressDTO homeAddress) {
         customerApplicationService.changeHomeAddressOfCustomer(userDetails.getUsername(), homeAddress);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/customers/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteCustomer(@PathVariable UUID id) {
-        customerApplicationService.deleteCustomer(CustomerId.of(id));
+        customerApplicationService.deleteCustomer(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
