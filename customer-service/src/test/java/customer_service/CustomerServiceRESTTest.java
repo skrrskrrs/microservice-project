@@ -166,6 +166,7 @@ public class CustomerServiceRESTTest {
                 .andReturn();
 
         //then
+        assertNotNull(location);
         mockMvc.perform(get(location))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -236,7 +237,6 @@ public class CustomerServiceRESTTest {
         MailAddressDTO mailAddressDTO = new MailAddressDTO("newMail@web.de");
         UUID testId = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d");
         String patchJson = objectMapper.writeValueAsString(mailAddressDTO);
-        Customer customer = validCustomerWithId;
 
         //when
         mockMvc.perform(patch("/customers/{id}/mailAddress",
@@ -247,10 +247,9 @@ public class CustomerServiceRESTTest {
                 .andDo(print());
 
         //then
-        Customer updated = customerRepository.findById(CustomerId.of(customer.getCustomerId().getId()))
+        Customer updated = customerRepository.findById(validCustomerWithId.getCustomerId())
                 .orElseThrow(() -> new AssertionError("Customer not found in DB"));
-        assertEquals(updated.getMailAddress(),
-                MailAddress.of("newMail@web.de"));
+        assertEquals(MailAddress.of("newMail@web.de"), updated.getMailAddress());
         System.out.println("Updated mail address: " + updated.getMailAddress().getMailAddress());
     }
 
@@ -279,7 +278,6 @@ public class CustomerServiceRESTTest {
         MailAddressDTO mailAddressDTO = new MailAddressDTO("newMail@web.de");
         String patchJson = objectMapper.writeValueAsString(mailAddressDTO);
 
-        UserEntity user = validUserEntityTestUser;
 
         //when
         mockMvc.perform(patch("/customers/me/mailAddress")
@@ -288,9 +286,9 @@ public class CustomerServiceRESTTest {
                 .andExpect(status().isOk());
 
         // then
-        Customer updated = customerRepository.findCustomerByUserId(user.getId())
+        Customer updated = customerRepository.findCustomerByUserId(validUserEntityTestUser.getId())
                 .orElseThrow(() -> new AssertionError("Customer not found in DB"));
-        assertEquals(updated.getMailAddress(), MailAddress.of("newMail@web.de"));
+        assertEquals(MailAddress.of("newMail@web.de"),updated.getMailAddress());
     }
 
     @Test
@@ -316,7 +314,6 @@ public class CustomerServiceRESTTest {
         HomeAddressDTO dto = new HomeAddressDTO("New Street", "New City", "Cologne","50886");
         UUID testId = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d");
         String patchJson = objectMapper.writeValueAsString(dto);
-        Customer customer = validCustomerWithId;
 
         //when
         mockMvc.perform(patch("/customers/{id}/homeAddress", testId.toString())
@@ -325,9 +322,9 @@ public class CustomerServiceRESTTest {
                 .andExpect(status().isOk());
 
         //then
-        Customer updated = customerRepository.findById(CustomerId.of(customer.getCustomerId().getId())).orElseThrow(() -> new AssertionError("Customer not found in DB"));
-        assertEquals(updated.getHomeAddress(),HomeAddress.of("New Street", "New City", "Cologne","50886"));
-        System.out.println("Updated mail address: " + customer.getHomeAddress().getStreet() + " " + customer.getHomeAddress().getCity() + " " + customer.getHomeAddress().getState());
+        Customer updated = customerRepository.findById(validCustomerWithId.getCustomerId()).orElseThrow(() -> new AssertionError("Customer not found in DB"));
+        assertEquals(HomeAddress.of("New Street", "New City", "Cologne","50886"), updated.getHomeAddress());
+        System.out.println("Updated mail address: " + updated.getHomeAddress().getStreet() + " " + updated.getHomeAddress().getCity() + " " + updated.getHomeAddress().getState());
     }
 
     @Test
@@ -337,8 +334,6 @@ public class CustomerServiceRESTTest {
         HomeAddressDTO dto = new HomeAddressDTO("New Street", "New City", "Cologne","50886");
         String patchJson = objectMapper.writeValueAsString(dto);
 
-        UserEntity user = validUserEntityTestUser;
-
         //when
         mockMvc.perform(patch("/customers/me/homeAddress")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -346,9 +341,9 @@ public class CustomerServiceRESTTest {
                 .andExpect(status().isOk());
 
         // then
-        Customer updated = customerRepository.findCustomerByUserId(user.getId())
+        Customer updated = customerRepository.findCustomerByUserId(validUserEntityTestUser.getId())
                 .orElseThrow(() -> new AssertionError("Customer not found in DB"));
-        assertEquals(updated.getHomeAddress(), HomeAddress.of("New Street", "New City", "Cologne", "50886"));
+        assertEquals(HomeAddress.of("New Street", "New City", "Cologne", "50886"), updated.getHomeAddress());
         System.out.println("Updated mail address: " + updated.getHomeAddress().getStreet() + " " + updated.getHomeAddress().getCity() + " " + updated.getHomeAddress().getState());
     }
 
