@@ -33,8 +33,10 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,8 +55,8 @@ public class CustomerServiceRESTTest {
     private final MockMvc mockMvc;
     private final ObjectMapper objectMapper;
     private final CustomUserDetailsService customUserDetailsService;
-    private UserEntity validUserEntity, validAdminEntity;
-    private Customer validCustomer, validCustomerWithId;
+    private UserEntity validUserEntityTestUser, validAdminEntity, validUserEntityOtherUser;
+    private Customer validCustomer, validCustomerWithId, otherValidCustomerWithId;
     private final UserRepository userRepository;
 
     @Autowired
@@ -74,9 +76,13 @@ public class CustomerServiceRESTTest {
 
     @BeforeEach
     public void setup() {
-        validUserEntity = UserEntity.registerNewUser(UserNameDomainPrimitive.of("TestUser")
+        validUserEntityTestUser = UserEntity.registerNewUser(UserNameDomainPrimitive.of("TestUser")
                 , HashedPasswordDomainPrimitive.of("Test@2026"));
-        userRepository.save(validUserEntity);
+        userRepository.save(validUserEntityTestUser);
+
+        validUserEntityOtherUser = UserEntity.registerNewUser(UserNameDomainPrimitive.of("OtherUser")
+                , HashedPasswordDomainPrimitive.of("Test@2026"));
+        userRepository.save(validUserEntityOtherUser);
 
         validAdminEntity = UserEntity.createWithRoles(UserNameDomainPrimitive.of("Admin")
                 , HashedPasswordDomainPrimitive.of("Test@2026"), Set.of(Role.ROLE_ADMIN));
@@ -87,7 +93,7 @@ public class CustomerServiceRESTTest {
                 "Meier",
                 MailAddress.of("test@valid.de"),
                 HomeAddress.of("Teststreet", "Cologne", "Westfalen", "50937"),
-                UserId.of(validUserEntity.getId().getId()));
+                UserId.of(validUserEntityTestUser.getId().getId()));
         customerRepository.save(validCustomer);
 
         validCustomerWithId = Customer.withId(CustomerId.of(UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d"))
@@ -166,12 +172,71 @@ public class CustomerServiceRESTTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    void testIdempotencyKeyRaceCondition() throws Exception {
+        // given
+        CreateCustomerDTO testDTO = SampleData.customerDTOHans();
+        String json = objectMapper.writeValueAsString(testDTO);
+        UUID idempotencyKey = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d");
+
+        int threads = 50;
+
+        ExecutorService executor = Executors.newFixedThreadPool(threads);
+        CountDownLatch ready = new CountDownLatch(threads);
+        CountDownLatch start = new CountDownLatch(1);
+        CountDownLatch done = new CountDownLatch(threads);
+
+        List<Integer> responses = Collections.synchronizedList(new ArrayList<>());
+
+        for (int i = 0; i < threads; i++) {
+            executor.submit(() -> {
+                try {
+                    ready.countDown();
+                    start.await();
+
+                    MvcResult result = mockMvc.perform(post("/customers")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .header("Idempotency-Key", idempotencyKey)
+                                    .content(json))
+                            .andReturn();
+
+                    responses.add(result.getResponse().getStatus());
+
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    done.countDown();
+                }
+            });
+        }
+            ready.await();
+            start.countDown();
+            done.await();
+
+            executor.shutdown();
+
+            //then
+
+            long createCount = responses.stream()
+                    .filter(s ->  s == 201)
+                    .count();
+
+            long conflictCount = responses.stream()
+                    .filter(s ->  s == 409)
+                    .count();
+
+            assertEquals(1, createCount);
+            assertEquals(threads - 1, conflictCount);
+
+    }
+
+    @Test
+    @WithMockUser(username = "Admin", roles = {"ADMIN"})
     public void updateMailAddressViaRESTAsAdmin() throws Exception {
         //given
         MailAddressDTO mailAddressDTO = new MailAddressDTO("newMail@web.de");
         UUID testId = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d");
         String patchJson = objectMapper.writeValueAsString(mailAddressDTO);
+        Customer customer = validCustomerWithId;
 
         //when
         mockMvc.perform(patch("/customers/{id}/mailAddress",
@@ -182,9 +247,11 @@ public class CustomerServiceRESTTest {
                 .andDo(print());
 
         //then
-        Customer updated = customerRepository.findCustomerByUserId(validAdminEntity.getId())
+        Customer updated = customerRepository.findById(CustomerId.of(customer.getCustomerId().getId()))
                 .orElseThrow(() -> new AssertionError("Customer not found in DB"));
-        assertEquals(updated.getMailAddress(), MailAddress.of("newMail@web.de"));
+        assertEquals(updated.getMailAddress(),
+                MailAddress.of("newMail@web.de"));
+        System.out.println("Updated mail address: " + updated.getMailAddress().getMailAddress());
     }
 
     @Test
@@ -202,6 +269,28 @@ public class CustomerServiceRESTTest {
                         .content(patchJson))
                 .andExpect(status().isForbidden())
                 .andDo(print());
+
+    }
+
+    @Test
+    @WithMockUser(username = "TestUser", roles = {"USER"})
+    void testUpdateMailAddressAsUser() throws Exception {
+        //given
+        MailAddressDTO mailAddressDTO = new MailAddressDTO("newMail@web.de");
+        String patchJson = objectMapper.writeValueAsString(mailAddressDTO);
+
+        UserEntity user = validUserEntityTestUser;
+
+        //when
+        mockMvc.perform(patch("/customers/me/mailAddress")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(patchJson))
+                .andExpect(status().isOk());
+
+        // then
+        Customer updated = customerRepository.findCustomerByUserId(user.getId())
+                .orElseThrow(() -> new AssertionError("Customer not found in DB"));
+        assertEquals(updated.getMailAddress(), MailAddress.of("newMail@web.de"));
     }
 
     @Test
@@ -221,12 +310,13 @@ public class CustomerServiceRESTTest {
     }
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = "Admin", roles = {"ADMIN"})
     void testUpdateHomeAddressAsAdmin() throws Exception {
         //given
         HomeAddressDTO dto = new HomeAddressDTO("New Street", "New City", "Cologne","50886");
         UUID testId = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d");
         String patchJson = objectMapper.writeValueAsString(dto);
+        Customer customer = validCustomerWithId;
 
         //when
         mockMvc.perform(patch("/customers/{id}/homeAddress", testId.toString())
@@ -235,8 +325,9 @@ public class CustomerServiceRESTTest {
                 .andExpect(status().isOk());
 
         //then
-        Customer customer = customerRepository.findById(CustomerId.of(testId)).orElseThrow(() -> new AssertionError("Customer not found in DB"));
-        assertEquals(customer.getHomeAddress(),HomeAddress.of("New Street", "New City", "Cologne","50886"));
+        Customer updated = customerRepository.findById(CustomerId.of(customer.getCustomerId().getId())).orElseThrow(() -> new AssertionError("Customer not found in DB"));
+        assertEquals(updated.getHomeAddress(),HomeAddress.of("New Street", "New City", "Cologne","50886"));
+        System.out.println("Updated mail address: " + customer.getHomeAddress().getStreet() + " " + customer.getHomeAddress().getCity() + " " + customer.getHomeAddress().getState());
     }
 
     @Test
@@ -246,7 +337,7 @@ public class CustomerServiceRESTTest {
         HomeAddressDTO dto = new HomeAddressDTO("New Street", "New City", "Cologne","50886");
         String patchJson = objectMapper.writeValueAsString(dto);
 
-        UserEntity user = customUserDetailsService.findUserByName("TestUser");
+        UserEntity user = validUserEntityTestUser;
 
         //when
         mockMvc.perform(patch("/customers/me/homeAddress")
@@ -258,6 +349,24 @@ public class CustomerServiceRESTTest {
         Customer updated = customerRepository.findCustomerByUserId(user.getId())
                 .orElseThrow(() -> new AssertionError("Customer not found in DB"));
         assertEquals(updated.getHomeAddress(), HomeAddress.of("New Street", "New City", "Cologne", "50886"));
+        System.out.println("Updated mail address: " + updated.getHomeAddress().getStreet() + " " + updated.getHomeAddress().getCity() + " " + updated.getHomeAddress().getState());
+    }
+
+    @Test
+    @WithMockUser(username = "TestUser", roles = {"USER"})
+    public void updateHomeAddressAsUser() throws Exception {
+        //given
+        HomeAddressDTO homeAddressDTO = new HomeAddressDTO("New Street", "New City", "Cologne","50886");
+        UUID testId = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d");
+        String patchJson = objectMapper.writeValueAsString(homeAddressDTO);
+
+        //when
+        mockMvc.perform(patch("/customers/{id}/homeAddress",
+                        testId.toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(patchJson))
+                .andExpect(status().isForbidden())
+                .andDo(print());
     }
 
     @Test
@@ -278,7 +387,7 @@ public class CustomerServiceRESTTest {
 
 
     @Test
-    @WithMockUser(username = "admin", roles = {"ADMIN"})
+    @WithMockUser(username = "Admin", roles = {"ADMIN"})
     public void deleteCustomerViaREST() throws Exception {
         //given
         UUID testId = UUID.fromString("27bddc7b-5a4f-460e-a072-63ba90b7cf1d");

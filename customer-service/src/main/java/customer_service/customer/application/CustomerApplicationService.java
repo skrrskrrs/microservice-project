@@ -92,6 +92,9 @@ public class CustomerApplicationService {
     public void changeHomeAddressOfCustomer(String userName, HomeAddressDTO homeAddress) {
         UserEntity user = userDetailsServiceCustomer.findUserByName(userName);
         Customer customer = customerRepository.findCustomerByUserId(user.getId()).orElseThrow(() -> new CustomerException("Customer does not exist"));
+        if (!customer.getUserId().equals(user.getId())) {
+            throw new CustomerException("You cannot update another customers data");
+        }
         HomeAddress newHomeAddress = HomeAddress.of(homeAddress.street(), homeAddress.city(), homeAddress.state(), homeAddress.zip());
         customer.changeHomeAddress(newHomeAddress);
     }
