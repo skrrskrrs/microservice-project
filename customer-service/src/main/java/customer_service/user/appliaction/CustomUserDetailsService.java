@@ -34,13 +34,12 @@ public class CustomUserDetailsService implements UserDetailsService, UserDetails
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        // Suche User in PostgreSQL
         UserEntity user = userRepository.findByUserName(UserNameDomainPrimitive.of(username)).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
 
         // Konvertiere zu Spring Security UserDetails
         return User.builder()
                 .username(user.getUserName().getUserName())
-                .password(user.getHashedPassword().getHashedPassword())  // Bereits verschlüsselt in DB!
+                .password(user.getHashedPassword().getHashedPassword())
                 .authorities(getAuthorities(user.getRoles()))
                 .disabled(!user.isEnabled())
                 .build();
@@ -69,13 +68,6 @@ public class CustomUserDetailsService implements UserDetailsService, UserDetails
         return userRepository.findByUserName(UserNameDomainPrimitive.of(userName)).orElseThrow(() -> new UserException("USer does not exist"));
     }
 
-
-
-    //TODO
-    // public RegisterUserDTO registerUserDTO(RegisterUserDTO userDTO) {
-    //        UserEntity user = UserEntity.registerNewUser(UserNameDomainPrimitive.of(userDTO.userName()), HashedPasswordDomainPrimitive.of(userDTO.password()));
-    //        userRepository.save(user);
-    //    }
 
 
 }

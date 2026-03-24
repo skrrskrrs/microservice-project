@@ -17,14 +17,6 @@ public class HashedPasswordDomainPrimitive {
 
     protected HashedPasswordDomainPrimitive(String hashedPassword) {
         if(hashedPassword == null || hashedPassword.isBlank()) throw new UserException("password cannot be null or empty");
-        if(hashedPassword.length() < 8) throw new UserException("password must be at least 8 characters");
-
-        String regex =  "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$";
-
-        if(!hashedPassword.matches(regex)){
-            throw new UserException("Password must contain upper, lower, digit and special character");
-        }
-
         this.hashedPassword = hashedPassword;
     }
 

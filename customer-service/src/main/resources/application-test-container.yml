@@ -3,6 +3,13 @@ spring:
     hibernate:
       ddl-auto: create-drop
     show-sql: true
+
   sql:
     init:
       mode: never
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.security.authentication: DEBUG
+    org.springframework.security.web: DEBUG

@@ -31,7 +31,6 @@ public class CustomerRESTController {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    // TODO Admin darf kunden löschen, Customer darf nur /kunden/me sehen  mit Authentication
     @GetMapping("/customers")
     public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
         List<CustomerDTO> customerDTOList = customerApplicationService.getAllCustomers();

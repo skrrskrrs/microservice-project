@@ -20,7 +20,6 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
 
-    //TODO Admin darf user anlegen, kunden darf nur sich selber sheen mit customer/me , außerdem PATCH nur user ihrer eigene Daten pahcen dürfen customer/me/homeAddress
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http

@@ -24,4 +24,11 @@ public class UserNameDomainPrimitive {
     public static UserNameDomainPrimitive of(String userName) {
         return new UserNameDomainPrimitive(userName);
     }
+
+    @Override
+    public String toString() {
+        return "UserNameDomainPrimitive{" +
+                "userName='" + userName + '\'' +
+                '}';
+    }
 }
