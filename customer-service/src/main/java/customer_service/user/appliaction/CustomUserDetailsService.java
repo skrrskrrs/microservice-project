@@ -7,6 +7,7 @@ import customer_service.user.domain.UserEntity;
 import customer_service.user.domain.UserException;
 import customer_service.user.domain.UserRepository;
 import customer_service.user.domainprimitives.HashedPasswordDomainPrimitive;
+import customer_service.user.domainprimitives.PasswordDomainPrimitive;
 import customer_service.user.domainprimitives.UserNameDomainPrimitive;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -53,7 +54,8 @@ public class CustomUserDetailsService implements UserDetailsService, UserDetails
 
     @Override
     public UserEntity createUser(CreateCustomerDTO createCustomerDTO) {
-        String encodedPassword = passwordEncoder.encode(createCustomerDTO.password());
+        PasswordDomainPrimitive checkedPw = PasswordDomainPrimitive.of(createCustomerDTO.password());
+        String encodedPassword = passwordEncoder.encode(checkedPw.getPassword());
         UserEntity user = UserEntity.registerNewUser(UserNameDomainPrimitive.of(createCustomerDTO.userName()),HashedPasswordDomainPrimitive.of(encodedPassword));
         userRepository.save(user);
         return user;
