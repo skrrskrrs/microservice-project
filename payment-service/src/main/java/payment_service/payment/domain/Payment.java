@@ -4,9 +4,8 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DialectOverride;
-import payment_service.DTOs.PaymentDTO;
 import payment_service.payment.domainprimitives.MoneyDomainPrimitive;
+import payment_service.payment.domainprimitives.OrderId;
 import payment_service.payment.domainprimitives.PaymentId;
 
 import java.util.UUID;
@@ -19,20 +18,20 @@ public class Payment {
     private PaymentId id;
     @Embedded
     private MoneyDomainPrimitive money;
-    //TODO OrderId erstellen
-    private UUID orderId;
+    @Embedded
+    private OrderId orderId;
     private boolean isPaid;
     @Version
     private Long version;
 
-    protected Payment(MoneyDomainPrimitive money, UUID orderId) {
+    protected Payment(MoneyDomainPrimitive money, OrderId orderId) {
         this.id = PaymentId.of(UUID.randomUUID());
         this.orderId = orderId;
         this.money = money;
         this.isPaid = false;
     }
 
-    public static Payment createPayment(MoneyDomainPrimitive money, UUID orderId) {
+    public static Payment createPayment(MoneyDomainPrimitive money, OrderId orderId) {
         return new Payment(money, orderId);
     }
 

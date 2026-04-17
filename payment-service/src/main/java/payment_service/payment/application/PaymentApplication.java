@@ -7,6 +7,7 @@ import payment_service.payment.domain.Payment;
 import payment_service.payment.domain.PaymentException;
 import payment_service.payment.domain.PaymentRepository;
 import payment_service.payment.domainprimitives.MoneyDomainPrimitive;
+import payment_service.payment.domainprimitives.OrderId;
 import payment_service.payment.domainprimitives.PaymentId;
 
 @Service
