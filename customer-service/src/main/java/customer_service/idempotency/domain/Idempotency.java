@@ -17,8 +17,4 @@ public class Idempotency {
     protected Idempotency(UUID id) {
         this.id = id;
     }
-
-    public static Idempotency newInstance(UUID id) {
-        return new Idempotency(id);
-    }
 }
