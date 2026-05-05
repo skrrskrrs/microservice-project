@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import invoice_service.invoice.domain.InvoiceException;
 
+import java.util.UUID;
+
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -26,6 +28,7 @@ public class MoneyAmount {
     public static MoneyAmount newInstance(Double amount, String currency) {
         return new MoneyAmount(amount, currency);
     }
+
 
 
 }

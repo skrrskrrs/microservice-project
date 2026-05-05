@@ -29,7 +29,7 @@ public class UserEntity {
     private Set<Role> roles;
     private boolean isEnabled;
 
-    protected UserEntity(UserNameDomainPrimitive userName, HashedPasswordDomainPrimitive hashedPassword, Set<Role> roles, boolean isEnabled) {
+    private UserEntity(UserNameDomainPrimitive userName, HashedPasswordDomainPrimitive hashedPassword, Set<Role> roles, boolean isEnabled) {
         if(userName==null || hashedPassword==null || roles==null) throw new UserException("Id, username, hashedPassword, roles is null");
         this.id = UserId.of(UUID.randomUUID());
         this.userName = userName;
@@ -44,5 +44,9 @@ public class UserEntity {
 
     public static UserEntity registerNewUser(UserNameDomainPrimitive userName, HashedPasswordDomainPrimitive hashedPassword) {
         return new UserEntity(userName,hashedPassword,Set.of(Role.ROLE_USER),true);
+    }
+
+    public UUID getUserId() {
+        return this.id.getId();
     }
 }

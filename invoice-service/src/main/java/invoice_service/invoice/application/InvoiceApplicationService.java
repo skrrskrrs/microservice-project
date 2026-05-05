@@ -45,17 +45,17 @@ public class InvoiceApplicationService {
         invoiceRepository.save(invoice);
 
         return new InvoiceDTO(
-                invoice.getId().getId(),
-                invoice.getCustomerId().getId(),
-                invoice.getMoneyAmount().getAmount(),
-                invoice.getMoneyAmount().getCurrency());
+                invoice.getIdValue(),
+                invoice.getCustomerIdValue(),
+                invoice.getAmount(),
+                invoice.getCurrency());
     }
 
     public InvoiceAndCustomerDTO getInvoiceForCustomer(UUID invoiceId) {
         Invoice invoice = findInvoice(invoiceId);
         CustomerDTO customerDTO = customerClient.getCustomerById(invoice.getCustomerId().getId());
         return new InvoiceAndCustomerDTO(
-                invoice.getId().getId(),
+                invoice.getIdValue(),
                 customerDTO,
                 invoice.getMoneyAmount().getAmount(),
                 invoice.getMoneyAmount().getCurrency());
@@ -66,10 +66,10 @@ public class InvoiceApplicationService {
                 .findByCustomerId(CustomerId.newInstance(customerId))
                 .stream()
                 .map(invoice -> new InvoiceDTO(
-                        invoice.getId().getId(),
-                        invoice.getCustomerId().getId(),
-                        invoice.getMoneyAmount().getAmount(),
-                        invoice.getMoneyAmount().getCurrency()
+                        invoice.getIdValue(),
+                        invoice.getCustomerIdValue(),
+                        invoice.getAmount(),
+                        invoice.getCurrency()
                 ))
                 .toList();
     }

@@ -24,7 +24,7 @@ public class Payment {
     @Version
     private Long version;
 
-    protected Payment(MoneyDomainPrimitive money, OrderId orderId) {
+    private Payment(MoneyDomainPrimitive money, OrderId orderId) {
         this.id = PaymentId.of(UUID.randomUUID());
         this.orderId = orderId;
         this.money = money;

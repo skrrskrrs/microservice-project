@@ -29,22 +29,14 @@ public class Customer {
     })
     private UserId userId;
 
-    protected Customer(String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress,UserId userId ) {
+    private Customer(CustomerId id, String firstName, String lastName,
+                     MailAddress mailAddress, HomeAddress homeAddress, UserId userId) {
         if (firstName == null || lastName == null || mailAddress == null || homeAddress == null)
-            throw new CustomerException("CustomerId and/or MailAddress are null");
-        if (firstName.isEmpty() || lastName.isEmpty()) throw new CustomerException("First Name or Last Name are Empty");
-        this.customerId = CustomerId.of(UUID.randomUUID());
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.mailAddress = mailAddress;
-        this.homeAddress = homeAddress;
-        this.userId = userId;
-    }
+            throw new CustomerException("Fields must not be null");
 
-    protected Customer(CustomerId id, String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress, UserId userId) {
-        if (firstName == null || lastName == null || mailAddress == null || homeAddress == null)
-            throw new CustomerException("CustomerId and/or MailAddress are null");
-        if (firstName.isEmpty() || lastName.isEmpty()) throw new CustomerException("First Name or Last Name are Empty");
+        if (firstName.isEmpty() || lastName.isEmpty())
+            throw new CustomerException("First Name or Last Name are Empty");
+
         this.customerId = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -53,12 +45,13 @@ public class Customer {
         this.userId = userId;
     }
 
+
     public static Customer withId(CustomerId id, String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress, UserId userId) {
         return new Customer(id, firstName, lastName, mailAddress, homeAddress, userId);
     }
 
     public static Customer of(String firstName, String lastName, MailAddress mailAddress, HomeAddress homeAddress, UserId userId) {
-        return new Customer(firstName, lastName, mailAddress, homeAddress, userId);
+        return new Customer(CustomerId.of(UUID.randomUUID()),firstName, lastName, mailAddress, homeAddress, userId);
     }
 
     public void changeHomeAddress(HomeAddress homeAddress) {
@@ -69,5 +62,8 @@ public class Customer {
         this.mailAddress = mailAddress;
     }
 
+    public UUID getIdValue() {
+        return this.customerId.getId();
+    }
 
 }

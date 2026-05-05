@@ -15,7 +15,6 @@ import customer_service.customer.domain.CustomerRepository;
 import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -39,7 +38,7 @@ public class CustomerApplicationService {
         List<CustomerDTO> customerDTOS = new ArrayList<>();
         for (Customer customer : customers) {
             CustomerDTO customerDTO = new CustomerDTO(
-                    customer.getCustomerId().getId(),
+                    customer.getIdValue(),
                     customer.getFirstName(),
                     customer.getLastName(),
                     MailAddressDTO.mailAddressAsDTO(customer.getMailAddress()),
@@ -56,7 +55,7 @@ public class CustomerApplicationService {
 
     public CustomerDTO getCustomerById(CustomerId customerId) {
         Customer customer = findCustomerById(customerId);
-        return new CustomerDTO(customer.getCustomerId().getId(),
+        return new CustomerDTO(customer.getIdValue(),
                 customer.getFirstName(),
                 customer.getLastName(),
                 MailAddressDTO.mailAddressAsDTO(customer.getMailAddress()),
@@ -75,11 +74,11 @@ public class CustomerApplicationService {
                         customerDTO.homeAddressDTO().city(),
                         customerDTO.homeAddressDTO().state(),
                         customerDTO.homeAddressDTO().zip()),
-                        UserId.of(user.getId().getId())
+                        UserId.of(user.getUserId())
         );
         customerRepository.save(customer);
 
-        return new CustomerDTO(customer.getCustomerId().getId(), customer.getFirstName(), customer.getLastName(), MailAddressDTO.mailAddressAsDTO(customer.getMailAddress()), HomeAddressDTO.homeAddressAsDTO(customer.getHomeAddress()));
+        return new CustomerDTO(customer.getIdValue(), customer.getFirstName(), customer.getLastName(), MailAddressDTO.mailAddressAsDTO(customer.getMailAddress()), HomeAddressDTO.homeAddressAsDTO(customer.getHomeAddress()));
     }
 
     public void changeMailAddressOfCustomer(String userName, MailAddressDTO mailAddress) {
@@ -87,28 +86,29 @@ public class CustomerApplicationService {
         Customer customer = customerRepository.findCustomerByUserId(user.getId()).orElseThrow(() -> new CustomerException("Customer does not exist"));
         MailAddress updatedMailAddress = MailAddress.of(mailAddress.mailAddress());
         customer.changeMailAddress(updatedMailAddress);
+        customerRepository.save(customer);
     }
 
     public void changeHomeAddressOfCustomer(String userName, HomeAddressDTO homeAddress) {
         UserEntity user = userDetailsServiceCustomer.findUserByName(userName);
         Customer customer = customerRepository.findCustomerByUserId(user.getId()).orElseThrow(() -> new CustomerException("Customer does not exist"));
-        if (!customer.getUserId().equals(user.getId())) {
-            throw new CustomerException("You cannot update another customers data");
-        }
         HomeAddress newHomeAddress = HomeAddress.of(homeAddress.street(), homeAddress.city(), homeAddress.state(), homeAddress.zip());
         customer.changeHomeAddress(newHomeAddress);
+        customerRepository.save(customer);
     }
 
     public void changeHomeAddressOfCustomerAsAdmin(UUID id, HomeAddressDTO homeAddress) {
         Customer customer = customerRepository.findById(CustomerId.of(id)).orElseThrow(() -> new CustomerException("Customer does not exist"));
         HomeAddress newHomeAddress = HomeAddress.of(homeAddress.street(), homeAddress.city(), homeAddress.state(), homeAddress.zip());
         customer.changeHomeAddress(newHomeAddress);
+        customerRepository.save(customer);
     }
 
     public void changeMailAddressOfCustomerAsAdmin(UUID id, MailAddressDTO mailAddressDTO) {
         Customer customer = customerRepository.findById(CustomerId.of(id)).orElseThrow(() -> new CustomerException("Customer does not exist"));
         MailAddress newMailAddress = MailAddress.of(mailAddressDTO.mailAddress());
         customer.changeMailAddress(newMailAddress);
+        customerRepository.save(customer);
     }
 
     public void deleteCustomer(UUID id) {

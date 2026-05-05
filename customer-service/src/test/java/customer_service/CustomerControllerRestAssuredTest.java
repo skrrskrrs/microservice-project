@@ -44,7 +44,7 @@ class CustomerControllerRestAssuredTest {
     private final UserRepository userRepository;
     private UserEntity validUserEntityTestUser, validAdminEntity, validUserEntityOtherUser;
     private Customer validCustomer, validCustomerWithId;
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     CustomerControllerRestAssuredTest(CustomerRepository customerRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
