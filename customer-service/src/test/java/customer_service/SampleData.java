@@ -10,7 +10,7 @@ public class SampleData {
 
     public static CreateCustomerDTO customerDTOHans() {
         return new CreateCustomerDTO("HansX",
-                "1234",
+                "Hans123$",
                 "Hans",
                 "Peter",
                 MailAddressDTO.mailAddressAsDTO(MailAddress.of("test@web.de")),

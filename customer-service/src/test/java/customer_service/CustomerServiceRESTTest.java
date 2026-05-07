@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import customer_service.DTOs.CreateCustomerDTO;
 import customer_service.DTOs.HomeAddressDTO;
 import customer_service.DTOs.MailAddressDTO;
+import customer_service.customer.application.CustomerRESTController;
 import customer_service.customer.domain.Customer;
 import customer_service.customer.domain.CustomerRepository;
 import customer_service.customer.domainprimitives.CustomerId;
@@ -116,10 +117,10 @@ public class CustomerServiceRESTTest {
         //when
         MvcResult mvcResult = mockMvc.perform(post("/customers")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("idempotency-key", idempotencyKey)
+                        .header("Idempotency-key", idempotencyKey)
                         .content(json))
-                .andExpect(status().isCreated())
                 .andDo(print())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.firstName", is(testDTO.firstName())))
                 .andExpect(jsonPath("$.lastName", is(testDTO.lastName())))
                 .andExpect(jsonPath("$.mailAddressDTO.mailAddress", is(testDTO.mailAddressDTO().mailAddress())))

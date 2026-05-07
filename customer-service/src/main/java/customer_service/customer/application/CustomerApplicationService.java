@@ -37,12 +37,12 @@ public class CustomerApplicationService {
         Iterable<Customer> customers = customerRepository.findAll();
         List<CustomerDTO> customerDTOS = new ArrayList<>();
         for (Customer customer : customers) {
-            CustomerDTO customerDTO = new CustomerDTO(
+            CustomerDTO customerDTO = CustomerDTO.createCustomerAsDTOWithId(
                     customer.getIdValue(),
                     customer.getFirstName(),
                     customer.getLastName(),
-                    MailAddressDTO.mailAddressAsDTO(customer.getMailAddress()),
-                    HomeAddressDTO.homeAddressAsDTO(customer.getHomeAddress())
+                    customer.getMailAddress(),
+                    customer.getHomeAddress()
             );
             customerDTOS.add(customerDTO);
         }
@@ -78,7 +78,7 @@ public class CustomerApplicationService {
         );
         customerRepository.save(customer);
 
-        return new CustomerDTO(customer.getIdValue(), customer.getFirstName(), customer.getLastName(), MailAddressDTO.mailAddressAsDTO(customer.getMailAddress()), HomeAddressDTO.homeAddressAsDTO(customer.getHomeAddress()));
+        return CustomerDTO.createCustomerAsDTOWithId(customer.getIdValue(),customer.getFirstName(),customer.getLastName(),customer.getMailAddress(),customer.getHomeAddress());
     }
 
     public void changeMailAddressOfCustomer(String userName, MailAddressDTO mailAddress) {

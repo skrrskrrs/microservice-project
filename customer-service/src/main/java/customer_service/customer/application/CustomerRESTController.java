@@ -43,7 +43,7 @@ public class CustomerRESTController {
         return new ResponseEntity<>(customerDTO, HttpStatus.OK);
     }
 
-    @PostMapping("customers")
+    @PostMapping("/customers")
     public ResponseEntity<CustomerDTO> createCustomer(@RequestHeader("Idempotency-Key") UUID idempotencyId, @RequestBody CreateCustomerDTO createCustomerDTO) {
         CustomerDTO createCustomer = customerApplicationService.createCustomer(idempotencyId, createCustomerDTO);
         URI returnURI = ServletUriComponentsBuilder
