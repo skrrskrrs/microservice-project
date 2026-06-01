@@ -1,4 +1,4 @@
-package order_service.domain;
+package order_service.order;
 
 import order_service.IMSAbstractException;
 import org.springframework.http.HttpStatus;

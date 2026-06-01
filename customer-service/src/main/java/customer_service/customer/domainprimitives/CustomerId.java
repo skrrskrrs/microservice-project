@@ -13,11 +13,12 @@ import java.util.UUID;
 @Getter
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
+@EqualsAndHashCode( onlyExplicitlyIncluded = true )
 public class CustomerId implements Serializable {
+    @EqualsAndHashCode.Include
     private UUID id;
 
-    protected CustomerId(UUID id) {
+    private CustomerId(UUID id) {
         if(id == null) throw new CustomerException("Customer id cannot be null");
         this.id = id;
     }

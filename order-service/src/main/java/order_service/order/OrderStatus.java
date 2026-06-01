@@ -1,4 +1,4 @@
-package order_service.domain;
+package order_service.order;
 
 public enum OrderStatus {
     PENDING,

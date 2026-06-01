@@ -1,4 +1,4 @@
-package order_service.domain;
+package order_service.order;
 
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.EmbeddedId;

@@ -2,20 +2,20 @@ package order_service.domainprimitives;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;
-import order_service.domain.OrderException;
+import order_service.order.OrderException;
 
 import java.util.UUID;
 
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode( onlyExplicitlyIncluded = true )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
 public class OrderId {
-
+    @EqualsAndHashCode.Include
     private UUID orderId;
 
     protected OrderId(UUID orderId) {
-        if(orderId == null){ throw new OrderException("Order id is null"); }
+        if(orderId == null){ throw new OrderException("Order id cant be null"); }
         this.orderId = orderId;
     }
 

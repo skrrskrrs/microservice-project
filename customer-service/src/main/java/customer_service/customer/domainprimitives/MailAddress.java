@@ -11,8 +11,9 @@ import customer_service.customer.domain.CustomerException;
 @Embeddable
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MailAddress {
+    @EqualsAndHashCode.Include
     private String mailAddress;
 
     protected MailAddress(String mailAddress) {

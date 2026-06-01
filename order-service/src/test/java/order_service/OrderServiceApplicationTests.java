@@ -1,6 +1,6 @@
 package order_service;
 
-import order_service.domain.Order;
+import order_service.order.Order;
 import order_service.domainprimitives.OrderId;
 import order_service.domainprimitives.OrderPart;
 import org.junit.jupiter.api.Test;

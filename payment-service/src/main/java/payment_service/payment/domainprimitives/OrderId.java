@@ -6,11 +6,11 @@ import payment_service.payment.domain.PaymentException;
 import java.util.UUID;
 
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode( onlyExplicitlyIncluded = true )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
 public class OrderId {
-
+    @EqualsAndHashCode.Include
     private UUID orderId;
 
     protected OrderId(UUID orderId) {

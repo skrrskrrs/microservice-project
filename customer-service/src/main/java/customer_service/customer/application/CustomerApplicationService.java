@@ -4,6 +4,7 @@ import customer_service.DTOs.CreateCustomerDTO;
 import customer_service.idempotency.application.IdempotencyApplicationService;
 import customer_service.user.domain.UserEntity;
 import customer_service.user.domainprimitives.UserId;
+import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import customer_service.DTOs.CustomerDTO;
 import customer_service.DTOs.HomeAddressDTO;
@@ -21,17 +22,12 @@ import java.util.UUID;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class CustomerApplicationService {
 
     private final CustomerRepository customerRepository;
     private final IdempotencyApplicationService idempotencyApplicationService;
     private final UserDetailsServiceCustomer userDetailsServiceCustomer;
-
-    public CustomerApplicationService(CustomerRepository customerRepository, IdempotencyApplicationService idempotencyApplicationService, UserDetailsServiceCustomer userDetailsServiceCustomer) {
-        this.customerRepository = customerRepository;
-        this.idempotencyApplicationService = idempotencyApplicationService;
-        this.userDetailsServiceCustomer = userDetailsServiceCustomer;
-    }
 
     public List<CustomerDTO> getAllCustomers() {
         Iterable<Customer> customers = customerRepository.findAll();

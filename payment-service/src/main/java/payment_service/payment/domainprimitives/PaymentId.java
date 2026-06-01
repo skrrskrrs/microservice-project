@@ -12,8 +12,9 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
-@EqualsAndHashCode
+@EqualsAndHashCode( onlyExplicitlyIncluded = true )
 public class PaymentId {
+    @EqualsAndHashCode.Include
     private UUID id;
 
     protected PaymentId(UUID id) {

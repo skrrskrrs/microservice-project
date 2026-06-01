@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import order_service.domain.OrderException;
+import order_service.order.OrderException;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

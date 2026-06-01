@@ -1,4 +1,4 @@
-package order_service.domain;
+package order_service.order;
 
 import java.util.UUID;
 

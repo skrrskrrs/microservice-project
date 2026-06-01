@@ -13,8 +13,9 @@ import java.util.UUID;
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode( onlyExplicitlyIncluded = true )
 public class CustomerId implements Serializable {
+    @EqualsAndHashCode.Include
     private UUID id;
 
     private CustomerId(UUID id) {
