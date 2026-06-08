@@ -26,9 +26,9 @@ public class AdminUserInitializer {
     }
 
     @Bean
-    CommandLineRunner init() {
+    public CommandLineRunner init() {
         return args -> {
-                if(userRepository.findByUserName(UserNameDomainPrimitive.of("Admin")).isEmpty()) {
+                if(userRepository.findByUserName(UserNameDomainPrimitive.of("admin")).isEmpty()) {
                 String hashedPassword = passwordEncoder.encode("Admin123!");
                 UserEntity admin = UserEntity.createWithRoles(UserNameDomainPrimitive.of("admin"), HashedPasswordDomainPrimitive.of(hashedPassword), Set.of(Role.ROLE_ADMIN));
 

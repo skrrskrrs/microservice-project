@@ -4,14 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import customer_service.DTOs.CreateCustomerDTO;
 import customer_service.DTOs.HomeAddressDTO;
 import customer_service.DTOs.MailAddressDTO;
-import customer_service.customer.application.CustomerRESTController;
 import customer_service.customer.domain.Customer;
 import customer_service.customer.domain.CustomerRepository;
 import customer_service.customer.domainprimitives.CustomerId;
 import customer_service.customer.domainprimitives.HomeAddress;
 import customer_service.customer.domainprimitives.MailAddress;
 
-import customer_service.user.appliaction.CustomUserDetailsService;
+import customer_service.user.application.CustomUserDetailsService;
 import customer_service.user.domain.Role;
 import customer_service.user.domain.UserEntity;
 import customer_service.user.domain.UserRepository;

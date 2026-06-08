@@ -1,4 +1,4 @@
-package customer_service.user.appliaction;
+package customer_service.user.application;
 
 import customer_service.DTOs.CreateCustomerDTO;
 import customer_service.customer.application.UserDetailsServiceCustomer;
@@ -67,7 +67,7 @@ public class CustomUserDetailsService implements UserDetailsService, UserDetails
 
     @Override
     public UserEntity findUserByName(String userName){
-        return userRepository.findByUserName(UserNameDomainPrimitive.of(userName)).orElseThrow(() -> new UserException("USer does not exist"));
+        return userRepository.findByUserName(UserNameDomainPrimitive.of(userName)).orElseThrow(() -> new UserException("User does not exist"));
     }
 
 
